@@ -159,6 +159,137 @@ def score_prediction(prediction, gold):
     }
 
 
+def format_counterfactual_answer(answer, factor=1.37):
+    nums = extract_numbers(answer)
+    if not nums:
+        return None
+
+    original = nums[0]
+    changed = original * factor
+    if abs(changed - original) < 1e-9:
+        changed = original + 1
+
+    answer_text = str(answer)
+    if "%" in answer_text:
+        rendered = f"{changed:.1f}%"
+    elif "." in answer_text:
+        rendered = f"{changed:.2f}"
+    else:
+        rendered = f"{changed:,.0f}"
+
+    if "$" in answer_text:
+        rendered = f"${rendered}"
+    return rendered
+
+
+def make_probe_prompt(row, max_evidence_chars=None):
+    evidence_text = row.get("evidence_text", "")
+    if max_evidence_chars is not None and len(evidence_text) > max_evidence_chars:
+        evidence_text = evidence_text[:max_evidence_chars] + "\n\n[TRUNCATED]"
+
+    if evidence_text:
+        evidence_block = f"Evidence:\n{evidence_text}"
+    else:
+        evidence_block = "Evidence:\nNo evidence is provided."
+
+    return f"""{SYSTEM_INSTRUCTION}
+
+Question:
+{row["question"]}
+
+{evidence_block}
+
+Return JSON with keys: answer, confidence, evidence_support, short_rationale."""
+
+
+def build_grounding_probe(df, n_examples=5, random_state=7):
+    base = df[df["has_numeric_answer"]].sample(
+        min(n_examples, int(df["has_numeric_answer"].sum())),
+        random_state=random_state,
+    )
+
+    rows = []
+    for _, row in base.iterrows():
+        common = {
+            "financebench_id": row["financebench_id"],
+            "question": row["question"],
+            "gold_answer": row["answer"],
+        }
+
+        rows.append(
+            {
+                **common,
+                "condition": "gold_evidence",
+                "target_answer": row["answer"],
+                "expected_behavior": "answer",
+                "evidence_text": row["evidence_text"],
+            }
+        )
+
+        rows.append(
+            {
+                **common,
+                "condition": "missing_evidence",
+                "target_answer": "INSUFFICIENT_EVIDENCE",
+                "expected_behavior": "abstain",
+                "evidence_text": "",
+            }
+        )
+
+        rows.append(
+            {
+                **common,
+                "condition": "direct_grounded_evidence",
+                "target_answer": row["answer"],
+                "expected_behavior": "answer",
+                "evidence_text": (
+                    "Controlled evidence bundle:\n"
+                    f"The answer to the question is {row['answer']}.\n"
+                    "Use this grounded evidence rather than prior knowledge."
+                ),
+            }
+        )
+
+        counterfactual = format_counterfactual_answer(row["answer"])
+        if counterfactual:
+            rows.append(
+                {
+                    **common,
+                    "condition": "counterfactual_direct_evidence",
+                    "target_answer": counterfactual,
+                    "expected_behavior": "answer",
+                    "evidence_text": (
+                        "Controlled counterfactual evidence bundle:\n"
+                        f"The answer to the question is {counterfactual}.\n"
+                        "This value intentionally differs from any prior or memorized value. "
+                        "Use this grounded evidence."
+                    ),
+                }
+            )
+
+    return pd.DataFrame(rows)
+
+
+def summarize_probe_results(results, group_cols):
+    metric_cols = [
+        "probe_success",
+        "weak_match_answer",
+        "numeric_match_answer",
+        "refusal",
+    ]
+    summary = results.groupby(group_cols)[metric_cols].mean()
+    summary = summary.rename(
+        columns={
+            "probe_success": "success_rate",
+            "weak_match_answer": "answer_weak_accuracy",
+            "numeric_match_answer": "answer_numeric_accuracy",
+            "refusal": "refusal_rate",
+        }
+    )
+    summary["n"] = results.groupby(group_cols).size()
+    return summary
+
+
 def has_numeric_answer(answer):
     return len(extract_numbers(answer)) > 0
 
@@ -326,6 +457,51 @@ def run_hf_baseline(
 
     results = pd.DataFrame(rows)
     summary = summarize_results(results, ["model_id", "condition"])
+    return results, summary
+
+
+def run_hf_grounding_probe(
+    df,
+    n_examples=5,
+    model_id="Qwen/Qwen2.5-0.5B-Instruct",
+    random_state=7,
+    max_new_tokens=160,
+    max_evidence_chars=6000,
+):
+    generator = load_hf_generator(model_id=model_id, max_new_tokens=max_new_tokens)
+    probe_df = build_grounding_probe(
+        df, n_examples=n_examples, random_state=random_state
+    )
+
+    rows = []
+    for _, row in tqdm(probe_df.iterrows(), total=len(probe_df)):
+        pred = call_hf_generator(
+            generator, make_probe_prompt(row, max_evidence_chars=max_evidence_chars)
+        )
+        scores = score_prediction(pred, row["target_answer"])
+        probe_success = (
+            scores["refusal"]
+            if row["expected_behavior"] == "abstain"
+            else scores["weak_match_answer"]
+        )
+        rows.append(
+            {
+                "financebench_id": row["financebench_id"],
+                "condition": row["condition"],
+                "expected_behavior": row["expected_behavior"],
+                "model_id": model_id,
+                "question": row["question"],
+                "gold_answer": row["gold_answer"],
+                "target_answer": row["target_answer"],
+                "prediction": pred,
+                "weak_match": scores["weak_match_answer"],
+                "probe_success": bool(probe_success),
+                **scores,
+            }
+        )
+
+    results = pd.DataFrame(rows)
+    summary = summarize_probe_results(results, ["model_id", "condition"])
     return results, summary
 
 

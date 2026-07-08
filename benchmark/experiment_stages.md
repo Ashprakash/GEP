@@ -134,6 +134,15 @@ Decision:
 
 - If models fail counterfactuals after passing originals, this becomes the benchmark paper's core empirical claim.
 
+Quick probe now implemented:
+
+- `gold_evidence`: original FinanceBench evidence.
+- `missing_evidence`: no evidence; expected behavior is abstention.
+- `direct_grounded_evidence`: controlled evidence directly states the gold answer.
+- `counterfactual_direct_evidence`: controlled evidence directly states a changed numeric answer.
+
+This is not paper-grade benchmark construction. It is a fast sanity test for whether the model can obey explicit grounded evidence and abstain when evidence is missing.
+
 ## Stage 4: Teacher Supervision Bundle Generation
 
 Question:
@@ -215,7 +224,7 @@ Decision:
 
 ## Current Next Step
 
-Rerun Stage 0 with parsed-answer scoring:
+Run the quick grounding probe:
 
 ```python
 %cd /content
@@ -223,4 +232,4 @@ Rerun Stage 0 with parsed-answer scoring:
 %cd /content/groundfin
 ```
 
-Then rerun **5. Open-Model Baseline** and paste the printed `=== HF SUMMARY ===` block.
+Then rerun **6. Grounding Probe** and paste the printed `=== PROBE SUMMARY ===` block.

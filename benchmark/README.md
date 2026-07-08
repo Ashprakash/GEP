@@ -52,6 +52,22 @@ Default model:
 Qwen/Qwen2.5-0.5B-Instruct
 ```
 
+## Grounding Probe
+
+The runner notebook includes a **Grounding Probe** section that directly tests the core GROUNDFIN idea:
+
+- Can the model use gold evidence?
+- Does it abstain when evidence is missing?
+- Can it copy a directly grounded answer?
+- Can it follow a directly grounded counterfactual answer?
+
+The probe writes:
+
+```text
+probe_summary.csv
+probe_results.csv
+```
+
 ## Immediate Pilot Goal
 
 Run enough examples to answer:
