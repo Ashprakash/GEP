@@ -108,6 +108,55 @@ def weak_answer_match(pred, gold):
     return numeric_close(pred, gold)
 
 
+def parse_model_answer(prediction):
+    text = str(prediction).strip()
+    cleaned = text
+    if cleaned.startswith("```"):
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
+
+    try:
+        obj = json.loads(cleaned)
+        if isinstance(obj, dict) and "answer" in obj:
+            return str(obj["answer"]).strip()
+    except Exception:
+        pass
+
+    match = re.search(r'"answer"\s*:\s*"([^"]+)"', cleaned)
+    if match:
+        return match.group(1).strip()
+
+    match = re.search(r"answer\s*:\s*(.+)", cleaned, flags=re.IGNORECASE)
+    if match:
+        return match.group(1).splitlines()[0].strip()
+
+    return text
+
+
+def is_refusal(answer_text):
+    normalized = normalize_text(answer_text)
+    refusal_markers = [
+        "insufficient_evidence",
+        "insufficient evidence",
+        "not enough evidence",
+        "cannot determine",
+        "not provided",
+        "no evidence",
+    ]
+    return any(marker in normalized for marker in refusal_markers)
+
+
+def score_prediction(prediction, gold):
+    answer_text = parse_model_answer(prediction)
+    return {
+        "parsed_answer": answer_text,
+        "weak_match_raw": weak_answer_match(prediction, gold),
+        "weak_match_answer": weak_answer_match(answer_text, gold),
+        "numeric_match_answer": numeric_close(answer_text, gold),
+        "refusal": is_refusal(answer_text),
+    }
+
+
 def has_numeric_answer(answer):
     return len(extract_numbers(answer)) > 0
 
@@ -178,6 +227,7 @@ def run_openai_baseline(df, n_examples=20, model="gpt-4.1-mini", random_state=7)
             ("with_gold_evidence", True),
         ]:
             pred = call_openai(make_prompt(row, with_evidence=with_evidence), model)
+            scores = score_prediction(pred, row["answer"])
             rows.append(
                 {
                     "financebench_id": row["financebench_id"],
@@ -185,14 +235,12 @@ def run_openai_baseline(df, n_examples=20, model="gpt-4.1-mini", random_state=7)
                     "question": row["question"],
                     "gold_answer": row["answer"],
                     "prediction": pred,
-                    "weak_match": weak_answer_match(pred, row["answer"]),
+                    **scores,
                 }
             )
 
     results = pd.DataFrame(rows)
-    summary = results.groupby("condition")["weak_match"].mean().to_frame(
-        "weak_accuracy"
-    )
+    summary = summarize_results(results, ["condition"])
     return results, summary
 
 
@@ -267,15 +315,33 @@ def run_hf_baseline(
                     "question": row["question"],
                     "gold_answer": row["answer"],
                     "prediction": pred,
-                    "weak_match": weak_answer_match(pred, row["answer"]),
+                    **score_prediction(pred, row["answer"]),
                 }
             )
 
     results = pd.DataFrame(rows)
-    summary = results.groupby(["model_id", "condition"])["weak_match"].mean().to_frame(
-        "weak_accuracy"
-    )
+    summary = summarize_results(results, ["model_id", "condition"])
     return results, summary
+
+
+def summarize_results(results, group_cols):
+    metric_cols = [
+        "weak_match_raw",
+        "weak_match_answer",
+        "numeric_match_answer",
+        "refusal",
+    ]
+    summary = results.groupby(group_cols)[metric_cols].mean()
+    summary = summary.rename(
+        columns={
+            "weak_match_raw": "weak_accuracy_raw",
+            "weak_match_answer": "weak_accuracy_answer",
+            "numeric_match_answer": "numeric_accuracy_answer",
+            "refusal": "refusal_rate",
+        }
+    )
+    summary["n"] = results.groupby(group_cols).size()
+    return summary
 
 
 def export_pilot_files(df, prefix="financebench_pilot_flat"):
