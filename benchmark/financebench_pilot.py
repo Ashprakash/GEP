@@ -103,9 +103,11 @@ def numeric_close(pred, gold, rel_tol=0.02, abs_tol=0.05):
 def weak_answer_match(pred, gold):
     pn = normalize_text(pred)
     gn = normalize_text(gold)
-    if gn and (gn in pn or pn in gn):
+    if numeric_close(pred, gold):
         return True
-    return numeric_close(pred, gold)
+    if len(pn) >= 12 and len(gn) >= 12 and (gn in pn or pn in gn):
+        return True
+    return False
 
 
 def parse_model_answer(prediction):

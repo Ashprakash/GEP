@@ -6,6 +6,10 @@ The staged experiment plan is here:
 
 - `experiment_stages.md`
 
+Pilot result notes are here:
+
+- `results_log.md`
+
 ## Current Notebooks
 
 - `groundfin_colab_runner.ipynb`: recommended stable Colab entry point.
