@@ -57,6 +57,7 @@ Qwen/Qwen2.5-0.5B-Instruct
 The runner notebook includes a **Grounding Probe** section that directly tests the core GROUNDFIN idea:
 
 - Can the model use gold evidence?
+- Does compact evidence help more than raw evidence?
 - Does it abstain when evidence is missing?
 - Can it copy a directly grounded answer?
 - Can it follow a directly grounded counterfactual answer?

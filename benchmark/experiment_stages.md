@@ -137,11 +137,12 @@ Decision:
 Quick probe now implemented:
 
 - `gold_evidence`: original FinanceBench evidence.
+- `evidence_compressed`: compact FinanceBench justification as a proxy for teacher-compressed evidence.
 - `missing_evidence`: no evidence; expected behavior is abstention.
 - `direct_grounded_evidence`: controlled evidence directly states the gold answer.
 - `counterfactual_direct_evidence`: controlled evidence directly states a changed numeric answer.
 
-This is not paper-grade benchmark construction. It is a fast sanity test for whether the model can obey explicit grounded evidence and abstain when evidence is missing.
+This is not paper-grade benchmark construction. It is a fast sanity test for whether the model can obey explicit grounded evidence, benefit from compressed evidence, and abstain when evidence is missing.
 
 ## Stage 4: Teacher Supervision Bundle Generation
 

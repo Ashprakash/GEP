@@ -226,6 +226,22 @@ def build_grounding_probe(df, n_examples=5, random_state=7):
             }
         )
 
+        justification = row.get("justification", "")
+        if isinstance(justification, str) and justification.strip():
+            rows.append(
+                {
+                    **common,
+                    "condition": "evidence_compressed",
+                    "target_answer": row["answer"],
+                    "expected_behavior": "answer",
+                    "evidence_text": (
+                        "Compact evidence bundle:\n"
+                        f"{justification.strip()}\n"
+                        "Use this compact evidence to answer the question."
+                    ),
+                }
+            )
+
         rows.append(
             {
                 **common,
