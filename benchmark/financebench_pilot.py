@@ -729,20 +729,28 @@ Question:
 {target_instruction}"""
 
 
-def _answer_injected(prompt, condition, gold_answer):
-    """Audit flag: did a non-raw condition inject the full gold-answer string?
+def _answer_injected(prompt, condition, gold_answer, evidence_text, leakage_mode):
+    """Audit flag: was the gold answer handed to the model beyond the evidence?
 
-    The gold numeric value can legitimately appear inside raw_gold_evidence, so
-    that condition is exempt. For every other condition, the whole normalized
-    gold-answer string appearing verbatim indicates the answer was handed to
-    the model (expected in oracle mode, a leak in deployment mode).
+    A deployment template is built from raw evidence, so the gold value can
+    legitimately appear in it because it appears in the evidence. That is
+    grounded extraction, not leakage. So in deployment mode we only flag a row
+    when the gold string is in the prompt but NOT in the raw evidence, i.e. it
+    was injected from somewhere other than the evidence (a real bug/leak).
+
+    In oracle mode we flag whenever the gold string is present, since the oracle
+    conditions intentionally embed it as an upper-bound signal. raw_gold_evidence
+    is always exempt.
     """
     if condition == "raw_gold_evidence":
         return False
     gold = normalize_text(gold_answer)
     if len(gold) < 4:
         return False
-    return gold in normalize_text(prompt)
+    in_prompt = gold in normalize_text(prompt)
+    if leakage_mode == "oracle":
+        return in_prompt
+    return in_prompt and gold not in normalize_text(evidence_text)
 
 
 def build_template_comparison(
@@ -791,7 +799,9 @@ def build_template_comparison(
                     "question": row["question"],
                     "gold_answer": row["answer"],
                     "target_answer": target_answer,
-                    "answer_injected": _answer_injected(prompt, condition, row["answer"]),
+                    "answer_injected": _answer_injected(
+                        prompt, condition, row["answer"], row["evidence_text"], leakage_mode
+                    ),
                     "prompt": prompt,
                 }
             )
