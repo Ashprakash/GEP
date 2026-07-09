@@ -128,8 +128,8 @@ def build_sft_examples(
     max_evidence_chars=6000,
     add_missing=True,
     add_counterfactual=True,
-    missing_frac=0.5,
-    counterfactual_frac=0.5,
+    missing_frac=0.2,
+    counterfactual_frac=0.35,
     seed=7,
 ):
     """Construct (prompt, completion) SFT pairs for one supervision variant.
@@ -536,8 +536,8 @@ def run_sft(
     variant="answer_template_abstain",
     model_id="Qwen/Qwen2.5-0.5B-Instruct",
     output_dir=None,
-    epochs=2,
-    lr=2e-4,
+    epochs=1,
+    lr=1e-4,
     batch_size=None,
     grad_accum=None,
     max_seq_len=None,
