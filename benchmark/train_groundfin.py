@@ -210,6 +210,71 @@ def build_sft_examples(
     return pd.DataFrame(examples)
 
 
+def generate_teacher_targets(
+    train_df,
+    teacher_model_id="Qwen/Qwen2.5-7B-Instruct",
+    max_evidence_chars=4000,
+    keep_only_correct=True,
+    add_missing=True,
+    add_counterfactual=True,
+    seed=7,
+):
+    """Filtered teacher distillation.
+
+    Runs a strong teacher over the method (risk-calibrated template) prompts,
+    parses its answer/confidence/rationale, and keeps rows where the teacher is
+    verifiably correct (weak-matches gold). The student is then SFT-trained on
+    the teacher's own correct, calibrated outputs rather than raw gold labels,
+    giving a real teacher-gap-recovery story. Missing/counterfactual rows are
+    added from the rule-defined augmentation (no teacher needed there).
+    """
+    generator = pilot.load_hf_generator(
+        model_id=teacher_model_id, max_new_tokens=192,
+        load_in_4bit=pilot.auto_4bit(teacher_model_id),
+    )
+
+    kept, dropped = [], 0
+    for _, row in pilot.tqdm(train_df.iterrows(), total=len(train_df)):
+        prompt = _supported_prompt(row, "answer_template_abstain", max_evidence_chars)
+        pred = pilot.call_hf_generator(generator, prompt)
+        answer = pilot.parse_model_answer(pred)
+        confidence = pilot.parse_model_confidence(pred)
+        gold = str(row["answer"])
+        if keep_only_correct and not pilot.weak_answer_match(answer, gold):
+            dropped += 1
+            continue
+        kept.append(
+            {
+                "variant": "teacher_distill",
+                "subtask": "supported",
+                "prompt": prompt,
+                "completion": make_target_completion(
+                    answer,
+                    confidence if confidence is not None else SUPPORTED_CONFIDENCE,
+                    evidence_support=True, abstain=False,
+                ),
+                "gold_answer": gold,
+                "target_answer": gold,
+                "expected_behavior": "answer",
+                "evidence_text": row.get("evidence_text", ""),
+            }
+        )
+
+    print(f"Teacher kept {len(kept)} correct / dropped {dropped} "
+          f"(teacher supported accuracy ~= {len(kept) / max(1, len(train_df)):.2f}).")
+
+    examples = pd.DataFrame(kept)
+    if add_missing or add_counterfactual:
+        aug = build_sft_examples(
+            train_df, variant="answer_template_abstain",
+            max_evidence_chars=max_evidence_chars,
+            add_missing=add_missing, add_counterfactual=add_counterfactual, seed=seed,
+        )
+        aug = aug[aug["subtask"] != "supported"]
+        examples = pd.concat([examples, aug], ignore_index=True)
+    return examples
+
+
 def audit_sft_leakage(examples):
     """Return supported rows whose PROMPT contains the target answer even though
     it is NOT present in the source evidence, i.e. the answer was injected rather
@@ -319,6 +384,7 @@ def run_sft(
     max_seq_len=1536,
     max_evidence_chars=4000,
     seed=7,
+    examples=None,
 ):
     import torch
     from datasets import Dataset
@@ -331,9 +397,12 @@ def run_sft(
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    examples = build_sft_examples(
-        train_df, variant=variant, max_evidence_chars=max_evidence_chars, seed=seed
-    )
+    # `examples` lets the caller pass a precomputed set (e.g. teacher-distilled
+    # targets from generate_teacher_targets); otherwise build from the variant.
+    if examples is None:
+        examples = build_sft_examples(
+            train_df, variant=variant, max_evidence_chars=max_evidence_chars, seed=seed
+        )
     leak = audit_sft_leakage(examples)
     if len(leak):
         print(f"[warn] {len(leak)} supported prompts contain the target answer; inspect audit_sft_leakage output.")
@@ -474,7 +543,15 @@ def _load_eval_generator(model_id, adapter=None, max_new_tokens=192):
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=dtype, device_map="auto")
+    kwargs = {"torch_dtype": dtype, "device_map": "auto"}
+    if pilot.auto_4bit(model_id) and torch.cuda.is_available():
+        from transformers import BitsAndBytesConfig
+
+        kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16, bnb_4bit_quant_type="nf4",
+        )
+        kwargs.pop("torch_dtype", None)
+    model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
     if adapter:
         from peft import PeftModel
 

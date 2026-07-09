@@ -219,6 +219,92 @@ def expected_calibration_error(results, confidence_col="confidence", correctness
     return ece
 
 
+# ---------------------------------------------------------------------------
+# Selective prediction: accuracy at coverage / risk-coverage curve.
+#
+# The reliability payoff. Instead of forcing an answer on every question, the
+# model answers only its most-confident cases and abstains on the rest. If the
+# calibrated confidence tracks correctness, accuracy on the *answered* subset
+# rises sharply as coverage drops. This is the honest route to a high headline
+# number on a small model: e.g. "80% accuracy at 45% coverage".
+# ---------------------------------------------------------------------------
+
+def _selective_order(results, confidence_col, refusal_col):
+    """Rank rows by confidence (desc); explicit refusals rank last (never answered)."""
+    conf = results[confidence_col].astype(float).fillna(0.0)
+    if refusal_col in results.columns:
+        refused = results[refusal_col].astype(bool)
+        conf = conf.where(~refused, -1.0)
+    return conf.sort_values(ascending=False, kind="mergesort").index
+
+
+def risk_coverage_curve(results, correctness_col="weak_match_answer",
+                        confidence_col="confidence", refusal_col="refusal"):
+    """Per-coverage selective accuracy, answering the top-k most confident rows."""
+    answerable = results
+    if "expected_behavior" in results.columns:
+        answerable = results[results["expected_behavior"] != "abstain"]
+    n = len(answerable)
+    if n == 0:
+        return pd.DataFrame(columns=["k", "coverage", "selective_accuracy"])
+
+    order = _selective_order(answerable, confidence_col, refusal_col)
+    correct = answerable[correctness_col].astype(float)
+    rows = []
+    running = 0.0
+    for k, idx in enumerate(order, start=1):
+        running += correct.loc[idx]
+        rows.append({"k": k, "coverage": k / n, "selective_accuracy": running / k})
+    return pd.DataFrame(rows)
+
+
+def accuracy_at_coverage(results, coverages=(0.2, 0.3, 0.5, 0.7, 1.0),
+                         correctness_col="weak_match_answer",
+                         confidence_col="confidence", refusal_col="refusal"):
+    """Selective accuracy at target coverage levels, plus AURC (lower is better)."""
+    curve = risk_coverage_curve(
+        results, correctness_col=correctness_col,
+        confidence_col=confidence_col, refusal_col=refusal_col,
+    )
+    out = {}
+    if curve.empty:
+        for c in coverages:
+            out[f"acc@{int(c * 100)}"] = None
+        out["aurc"] = None
+        out["full_accuracy"] = None
+        return out
+
+    n = int(curve["k"].max())
+    for c in coverages:
+        k = max(1, min(n, int(round(c * n))))
+        out[f"acc@{int(c * 100)}"] = float(curve.loc[curve["k"] == k, "selective_accuracy"].iloc[0])
+    out["aurc"] = float((1.0 - curve["selective_accuracy"]).mean())
+    out["full_accuracy"] = float(curve["selective_accuracy"].iloc[-1])
+    return out
+
+
+def selective_summary(results, group_cols, coverages=(0.2, 0.3, 0.5, 0.7, 1.0),
+                      correctness_col="weak_match_answer",
+                      confidence_col="confidence", refusal_col="refusal"):
+    """accuracy@coverage table per group (model/condition/label)."""
+    rows = []
+    for keys, group in results.groupby(group_cols):
+        metrics = accuracy_at_coverage(
+            group, coverages=coverages, correctness_col=correctness_col,
+            confidence_col=confidence_col, refusal_col=refusal_col,
+        )
+        if not isinstance(keys, tuple):
+            keys = (keys,)
+        entry = dict(zip(group_cols, keys))
+        entry.update(metrics)
+        entry["n_answerable"] = int(
+            (group["expected_behavior"] != "abstain").sum()
+            if "expected_behavior" in group.columns else len(group)
+        )
+        rows.append(entry)
+    return pd.DataFrame(rows)
+
+
 def format_counterfactual_answer(answer, factor=1.37):
     nums = extract_numbers(answer)
     if not nums:
@@ -898,17 +984,25 @@ def run_openai_baseline(df, n_examples=20, model="gpt-4.1-mini", random_state=7)
     return results, summary
 
 
-def load_hf_generator(model_id="Qwen/Qwen2.5-0.5B-Instruct", max_new_tokens=192):
+def load_hf_generator(model_id="Qwen/Qwen2.5-0.5B-Instruct", max_new_tokens=192,
+                      load_in_4bit=False):
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id,
-        device_map="auto",
-        torch_dtype=dtype,
-    )
+    kwargs = {"device_map": "auto", "torch_dtype": dtype}
+    if load_in_4bit and torch.cuda.is_available():
+        # Fits 3B/7B teachers/anchors on a single T4 (16 GB).
+        from transformers import BitsAndBytesConfig
+
+        kwargs["quantization_config"] = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.float16,
+            bnb_4bit_quant_type="nf4",
+        )
+        kwargs.pop("torch_dtype", None)
+    model = AutoModelForCausalLM.from_pretrained(model_id, **kwargs)
     return pipeline(
         "text-generation",
         model=model,
@@ -917,6 +1011,11 @@ def load_hf_generator(model_id="Qwen/Qwen2.5-0.5B-Instruct", max_new_tokens=192)
         do_sample=False,
         return_full_text=False,
     )
+
+
+def auto_4bit(model_id):
+    """Heuristic: quantize models >= ~3B so they fit a single T4."""
+    return any(tag in model_id for tag in ["3B", "7B", "8B", "13B", "14B"])
 
 
 def call_hf_generator(generator, prompt):
@@ -1205,7 +1304,10 @@ def run_template_comparison_suite(
 ):
     all_rows = []
     for model_id in model_ids:
-        generator = load_hf_generator(model_id=model_id, max_new_tokens=max_new_tokens)
+        generator = load_hf_generator(
+            model_id=model_id, max_new_tokens=max_new_tokens,
+            load_in_4bit=auto_4bit(model_id),
+        )
         try:
             for leakage_mode in leakage_modes:
                 for seed in seeds:
