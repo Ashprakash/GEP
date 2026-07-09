@@ -87,6 +87,24 @@ def extract_numbers(s):
     ]
 
 
+def extract_number_mentions(s):
+    """Return numeric mentions with both raw text and parsed value."""
+    mentions = []
+    for match in re.finditer(r"-?\$?\(?\d+(?:,\d{3})*(?:\.\d+)?\)?%?", str(s)):
+        raw = match.group(0)
+        cleaned = raw.replace("$", "").replace(",", "").replace("%", "")
+        negative = cleaned.startswith("-") or (cleaned.startswith("(") and cleaned.endswith(")"))
+        cleaned = cleaned.strip("-()")
+        try:
+            value = float(cleaned)
+        except ValueError:
+            continue
+        if negative:
+            value = -value
+        mentions.append({"raw": raw, "value": value, "start": match.start(), "end": match.end()})
+    return mentions
+
+
 def numeric_close(pred, gold, rel_tol=0.02, abs_tol=0.05):
     pnums = extract_numbers(pred)
     gnums = extract_numbers(gold)
@@ -1438,3 +1456,569 @@ def check_deployment_leakage(df, n_examples=25, seed=7):
         & (comparison_df["answer_injected"])
     ]
     return violations[["financebench_id", "condition", "gold_answer"]]
+
+
+# ---------------------------------------------------------------------------
+# E0: Task-typed financial evidence bundles.
+#
+# This is the falsifiable pre-training experiment for the stronger hypothesis:
+# generic compression is not enough; finance QA needs task-typed decision
+# variables. These helpers build a no-leakage financial evidence interface from
+# raw evidence only, then compare:
+#   raw_gold_evidence -> reader
+#   generic_summary -> reader
+#   task_typed_bundle -> reader
+#   oracle_typed_bundle -> reader upper bound
+# ---------------------------------------------------------------------------
+
+TASK_SCHEMAS = {
+    "cash_flow_line_item": {
+        "required_variables": ["line_item_label", "period", "value", "unit"],
+        "answer_rule": (
+            "Find the cash-flow statement line item matching the target metric. "
+            "For capital expenditure / capex, use purchases of property, plant "
+            "and equipment (PP&E); report magnitude unless the question asks for sign."
+        ),
+    },
+    "ratio_calculation": {
+        "required_variables": ["numerator", "denominator", "formula", "unit"],
+        "answer_rule": "Compute the requested ratio from the numerator and denominator, then format in the requested unit.",
+    },
+    "period_comparison": {
+        "required_variables": ["current_period_value", "prior_period_value", "comparison_direction"],
+        "answer_rule": "Compare the two period-specific values and answer with the direction or difference requested.",
+    },
+    "cash_flow_category_selection": {
+        "required_variables": ["operating_cash_flow", "investing_cash_flow", "financing_cash_flow"],
+        "answer_rule": "Compare operating, investing, and financing cash flows and select the requested category.",
+    },
+    "guidance_delta": {
+        "required_variables": ["old_guidance", "new_guidance", "delta", "metric"],
+        "answer_rule": "Compare old and new guidance for the named metric and report the change.",
+    },
+    "line_item_lookup": {
+        "required_variables": ["line_item_label", "period", "value", "unit"],
+        "answer_rule": "Locate the requested financial line item for the requested period and report its value.",
+    },
+    "generic_financial_qa": {
+        "required_variables": ["decision_relevant_facts", "values", "periods"],
+        "answer_rule": "Use the evidence variables to answer only if the bundle is sufficient.",
+    },
+}
+
+
+def infer_task_type(row):
+    """Coarse task typing from question text and FinanceBench metadata."""
+    question = str(row.get("question", "")).lower()
+    qtype = str(row.get("question_type", "")).lower()
+    reasoning = str(row.get("question_reasoning", "")).lower()
+    text = " ".join([question, qtype, reasoning])
+
+    if any(term in text for term in ["guidance", "raised", "lowered", "outlook"]):
+        return "guidance_delta"
+    if "cash flow" in text and any(term in text for term in ["among", "which", "highest", "lowest", "most"]):
+        return "cash_flow_category_selection"
+    if any(term in text for term in ["capital expenditure", "capex", "purchases of property", "pp&e"]):
+        return "cash_flow_line_item"
+    if any(term in text for term in ["ratio", "margin", "retention", "percentage", "percent", "%"]):
+        return "ratio_calculation"
+    if any(term in text for term in ["compare", "vs", "versus", "increase", "decrease", "growth", "decline", "change"]):
+        return "period_comparison"
+    if any(term in text for term in ["amount", "what was", "how much", "balance", "revenue", "income", "expense"]):
+        return "line_item_lookup"
+    return "generic_financial_qa"
+
+
+def _period_mentions(text):
+    mentions = re.findall(r"\b(?:FY)?(?:19|20)\d{2}\b|\bQ[1-4]\b", str(text), flags=re.IGNORECASE)
+    seen = []
+    for m in mentions:
+        m = m.upper()
+        if m not in seen:
+            seen.append(m)
+    return seen[:8]
+
+
+def _unit_guess(text):
+    lower = str(text).lower()
+    if "%" in lower or "percent" in lower:
+        return "percent"
+    if "million" in lower or "millions" in lower:
+        return "millions"
+    if "billion" in lower or "billions" in lower:
+        return "billions"
+    if "$" in lower or "usd" in lower:
+        return "currency"
+    return "unknown"
+
+
+def _target_metric_terms(question, max_terms=8):
+    toks = [t for t in _tokens(question) if not re.fullmatch(r"\d+(?:\.\d+)?%?", t)]
+    preferred = []
+    for phrase in [
+        "capital expenditure", "cash flow", "operating activities", "investing activities",
+        "financing activities", "revenue", "net income", "ebitda", "margin",
+        "guidance", "eps", "sales", "retention ratio",
+    ]:
+        if phrase in str(question).lower():
+            preferred.append(phrase)
+    for tok in toks:
+        if tok not in preferred:
+            preferred.append(tok)
+    return preferred[:max_terms]
+
+
+def _evidence_candidates(question, evidence_text, max_units=6, max_candidates=12):
+    units = split_evidence_units(evidence_text)
+    scored = rank_evidence_units(question, units)[:max_units]
+    evidence_units = []
+    candidates = []
+    seen = set()
+    for score, overlap, unit in scored:
+        text = unit["text"]
+        evidence_units.append(
+            {
+                "text": text,
+                "source": unit["source"],
+                "question_overlap": overlap,
+                "relevance_score": round(score, 3),
+            }
+        )
+        for mention in extract_number_mentions(text):
+            key = (mention["raw"], text[:80])
+            if key in seen:
+                continue
+            seen.add(key)
+            left = max(0, mention["start"] - 80)
+            right = min(len(text), mention["end"] + 80)
+            candidates.append(
+                {
+                    "raw_value": mention["raw"],
+                    "value": mention["value"],
+                    "unit_guess": _unit_guess(text),
+                    "context": text[left:right].strip(),
+                    "source": unit["source"],
+                    "relevance_score": round(score, 3),
+                }
+            )
+            if len(candidates) >= max_candidates:
+                break
+        if len(candidates) >= max_candidates:
+            break
+    return evidence_units, candidates
+
+
+def build_task_typed_bundle(row, include_probabilities=True, max_units=6, max_candidates=12):
+    """No-leakage finance-specific bundle from raw evidence and metadata only."""
+    task_type = infer_task_type(row)
+    schema = TASK_SCHEMAS[task_type]
+    question = row["question"]
+    evidence_units, candidates = _evidence_candidates(
+        question, row.get("evidence_text", ""), max_units=max_units, max_candidates=max_candidates
+    )
+    q_tokens = set(_tokens(question))
+    covered = set()
+    for unit in evidence_units:
+        covered |= set(_tokens(unit["text"])) & q_tokens
+    coverage = len(covered) / max(1, len(q_tokens))
+    support = min(0.95, 0.2 + 0.5 * coverage + 0.2 * bool(candidates))
+    support = round(max(0.05, support), 3)
+
+    bundle = {
+        "bundle_type": "task_typed_financial_evidence",
+        "bundle_source": "rule_extraction_from_raw_evidence",
+        "task_type": task_type,
+        "task_schema": {
+            "required_variables": schema["required_variables"],
+            "answer_rule": schema["answer_rule"],
+        },
+        "question": question,
+        "entity": row.get("company", ""),
+        "document_period": row.get("doc_period", ""),
+        "target_metric_terms": _target_metric_terms(question),
+        "period_mentions": _period_mentions(question + " " + " ".join(u["text"] for u in evidence_units)),
+        "candidate_variables": candidates,
+        "evidence_units": evidence_units,
+        "support_probability": support if include_probabilities else None,
+        "abstain_probability": round(1 - support, 3) if include_probabilities else None,
+        "answer": "TO_BE_DETERMINED",
+        "audit": {
+            "gold_answer_used": False,
+            "raw_evidence_only": True,
+        },
+    }
+    if not include_probabilities:
+        bundle.pop("support_probability", None)
+        bundle.pop("abstain_probability", None)
+    return bundle
+
+
+def build_oracle_task_typed_bundle(row):
+    """Oracle upper-bound bundle. It intentionally includes the gold answer."""
+    compact, source = compact_evidence_for_row(row)
+    task_type = infer_task_type(row)
+    schema = TASK_SCHEMAS[task_type]
+    answer = str(row["answer"])
+    nums = extract_number_mentions(answer)
+    return {
+        "bundle_type": "oracle_task_typed_financial_evidence",
+        "bundle_source": source,
+        "task_type": task_type,
+        "task_schema": {
+            "required_variables": schema["required_variables"],
+            "answer_rule": schema["answer_rule"],
+        },
+        "question": row["question"],
+        "entity": row.get("company", ""),
+        "document_period": row.get("doc_period", ""),
+        "evidence_units": [{"text": compact, "source": row.get("doc_name", "")}],
+        "candidate_variables": [
+            {
+                "raw_value": n["raw"],
+                "value": n["value"],
+                "unit_guess": _unit_guess(answer),
+                "context": answer,
+                "source": "gold_answer",
+                "relevance_score": 1.0,
+            }
+            for n in nums
+        ],
+        "support_probability": 0.97,
+        "abstain_probability": 0.03,
+        "answer": answer,
+        "audit": {
+            "gold_answer_used": True,
+            "oracle_upper_bound_only": True,
+        },
+    }
+
+
+def make_problem_bundle_prompt(row, condition, max_evidence_chars=6000):
+    """Prompt for raw/generic/task-typed/oracle bundle comparisons."""
+    question = row["question"]
+    target_instruction = "Return JSON with keys: answer, confidence, evidence_support, short_rationale."
+    if condition == "raw_gold_evidence":
+        payload = _raw_evidence_payload(row, max_evidence_chars)
+        support = None
+    elif condition == "generic_summary":
+        summary = extractive_summary(question, row["evidence_text"], max_sentences=4, max_chars=max_evidence_chars)
+        payload = (
+            "Generic extractive summary from raw evidence:\n"
+            f"{summary}\n"
+            "Use only this summary. If it is insufficient, answer INSUFFICIENT_EVIDENCE."
+        )
+        support = None
+    elif condition == "task_typed_bundle":
+        bundle = build_task_typed_bundle(row)
+        support = bundle.get("support_probability")
+        payload = (
+            "Task-typed financial evidence bundle built from raw evidence only:\n"
+            f"{json.dumps(bundle, ensure_ascii=False, indent=2)}\n"
+            "Use the task_schema, candidate_variables, and evidence_units to compute the answer. "
+            "Do not copy TO_BE_DETERMINED. If the bundle is insufficient, answer INSUFFICIENT_EVIDENCE. "
+            "Set confidence close to support_probability when present."
+        )
+    elif condition == "oracle_typed_bundle":
+        bundle = build_oracle_task_typed_bundle(row)
+        support = bundle.get("support_probability")
+        payload = (
+            "Oracle task-typed financial evidence bundle for upper-bound measurement:\n"
+            f"{json.dumps(bundle, ensure_ascii=False, indent=2)}\n"
+            "Use the bundle to answer. This condition is an upper bound, not a deployment method."
+        )
+    else:
+        raise ValueError(f"Unknown problem-bundle condition: {condition}")
+
+    prompt = f"""{SYSTEM_INSTRUCTION}
+
+Question:
+{question}
+
+{payload}
+
+{target_instruction}"""
+    return prompt, support
+
+
+def build_problem_bundle_eval(df, n_examples=5, random_state=7, max_evidence_chars=6000):
+    base = df[df["has_numeric_answer"]].sample(
+        min(n_examples, int(df["has_numeric_answer"].sum())), random_state=random_state
+    ).reset_index(drop=True)
+    conditions = [
+        "raw_gold_evidence",
+        "generic_summary",
+        "task_typed_bundle",
+        "oracle_typed_bundle",
+    ]
+    rows = []
+    for _, row in base.iterrows():
+        for condition in conditions:
+            prompt, support = make_problem_bundle_prompt(
+                row, condition, max_evidence_chars=max_evidence_chars
+            )
+            rows.append(
+                {
+                    "financebench_id": row["financebench_id"],
+                    "condition": condition,
+                    "task_type": infer_task_type(row),
+                    "question": row["question"],
+                    "gold_answer": row["answer"],
+                    "target_answer": row["answer"],
+                    "support_probability": support,
+                    "answer_injected": _answer_injected(
+                        prompt, condition, row["answer"], row["evidence_text"],
+                        "oracle" if condition == "oracle_typed_bundle" else "deployment",
+                    ),
+                    "prompt": prompt,
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def run_problem_bundle_eval(
+    df,
+    reader_model_ids=("Qwen/Qwen2.5-0.5B-Instruct",),
+    n_examples=5,
+    random_state=7,
+    max_new_tokens=192,
+    max_evidence_chars=6000,
+):
+    eval_df = build_problem_bundle_eval(
+        df, n_examples=n_examples, random_state=random_state, max_evidence_chars=max_evidence_chars
+    )
+    rows = []
+    for reader_id in reader_model_ids:
+        generator = load_hf_generator(
+            model_id=reader_id, max_new_tokens=max_new_tokens, load_in_4bit=auto_4bit(reader_id)
+        )
+        try:
+            for _, row in tqdm(eval_df.iterrows(), total=len(eval_df), desc=reader_id.split("/")[-1]):
+                pred = call_hf_generator(generator, row["prompt"])
+                scores = score_prediction(pred, row["target_answer"])
+                rows.append(
+                    {
+                        "reader_id": reader_id,
+                        "condition": row["condition"],
+                        "task_type": row["task_type"],
+                        "financebench_id": row["financebench_id"],
+                        "question": row["question"],
+                        "gold_answer": row["gold_answer"],
+                        "target_answer": row["target_answer"],
+                        "support_probability": row["support_probability"],
+                        "answer_injected": row["answer_injected"],
+                        "prediction": pred,
+                        **scores,
+                    }
+                )
+        finally:
+            del generator
+            _free_accelerator()
+    results = pd.DataFrame(rows)
+    return results, summarize_problem_bundle_eval(results)
+
+
+def summarize_problem_bundle_eval(results):
+    """Summarize task-typed bundle evaluation and inherited support calibration."""
+    rows = []
+    for (reader_id, condition), g in results.groupby(["reader_id", "condition"]):
+        entry = {
+            "reader": reader_id.split("/")[-1],
+            "condition": condition,
+            "accuracy": g["weak_match_answer"].astype(float).mean(),
+            "numeric_accuracy": g["numeric_match_answer"].astype(float).mean(),
+            "refusal_rate": g["refusal"].astype(float).mean(),
+            "avg_confidence": g["confidence"].astype(float).mean(),
+            "verbalized_ece": expected_calibration_error(g),
+            "overconfident_wrong_rate": g["overconfident_wrong"].astype(float).mean(),
+            "answer_injected_rate": g["answer_injected"].astype(float).mean(),
+            "n": len(g),
+        }
+        sp = g.dropna(subset=["support_probability"])
+        if len(sp) >= 3:
+            entry["inherited_support_ece"] = expected_calibration_error(
+                sp, confidence_col="support_probability"
+            )
+            entry["support_corr"] = sp["support_probability"].astype(float).corr(
+                sp["weak_match_answer"].astype(float)
+            )
+            entry.update(
+                {
+                    f"support_{k}": v
+                    for k, v in accuracy_at_coverage(
+                        sp,
+                        coverages=(0.3, 0.5, 1.0),
+                        confidence_col="support_probability",
+                    ).items()
+                }
+            )
+        rows.append(entry)
+    order = {
+        "raw_gold_evidence": 0,
+        "generic_summary": 1,
+        "task_typed_bundle": 2,
+        "oracle_typed_bundle": 3,
+    }
+    out = pd.DataFrame(rows)
+    out["_order"] = out["condition"].map(order).fillna(9)
+    return out.sort_values(["reader", "_order"]).drop(columns="_order").reset_index(drop=True)
+
+
+# ---------------------------------------------------------------------------
+# E1: Extraction cascade (pivotal experiment for Hypothesis v2).
+#
+# Delegated reliability: a stronger EXTRACTOR turns raw evidence into a compact
+# bundle plus a support probability (never seeing the gold answer); a small
+# READER answers from the bundle and inherits the support estimate as its
+# confidence. Tests:
+#   H1 extraction gap:    reader acc on bundles >> reader acc on raw evidence
+#   H2 confidence transport: ECE(inherited support prob) << ECE(verbalized),
+#                            corr(support_prob, correctness) > 0
+# ---------------------------------------------------------------------------
+
+def make_extraction_prompt(row, max_evidence_chars=6000):
+    evidence_text = row["evidence_text"]
+    if max_evidence_chars is not None and len(evidence_text) > max_evidence_chars:
+        evidence_text = evidence_text[:max_evidence_chars] + "\n\n[TRUNCATED]"
+    return f"""You are a financial evidence extractor. Read the question and the raw evidence.
+Extract the minimal facts (values, dates, entities, and any formula inputs) needed to answer the question.
+Do NOT answer the question. Do NOT use outside knowledge.
+
+Question:
+{row["question"]}
+
+Raw evidence:
+{evidence_text}
+
+Return JSON with exactly these keys:
+"evidence_bundle": a 1-4 sentence compact statement of the decision-relevant facts,
+"support_probability": a number 0-1, your probability that the bundle contains sufficient evidence to answer."""
+
+
+def parse_extraction(prediction):
+    """Parse extractor output -> (bundle_text, support_probability or None)."""
+    text = str(prediction).strip()
+    cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", text, flags=re.IGNORECASE)
+    try:
+        obj = json.loads(cleaned)
+        if isinstance(obj, dict):
+            bundle = str(obj.get("evidence_bundle", "")).strip()
+            prob = obj.get("support_probability")
+            prob = max(0.0, min(1.0, float(prob))) if prob is not None else None
+            if bundle:
+                return bundle, prob
+    except Exception:
+        pass
+    m = re.search(r'"evidence_bundle"\s*:\s*"([^"]+)"', cleaned)
+    bundle = m.group(1).strip() if m else cleaned[:800]
+    mp = re.search(r'"support_probability"\s*:\s*([01](?:\.\d+)?)', cleaned)
+    prob = max(0.0, min(1.0, float(mp.group(1)))) if mp else None
+    return bundle, prob
+
+
+def make_bundle_reader_prompt(question, bundle, support_probability=None):
+    support_line = (
+        f"The extractor estimates support_probability={support_probability:.2f} "
+        "that this bundle is sufficient.\n" if support_probability is not None else ""
+    )
+    return f"""{SYSTEM_INSTRUCTION}
+
+Question:
+{question}
+
+Compact evidence bundle (extracted from source filings):
+{bundle}
+{support_line}Use only this bundle. If it is insufficient, answer INSUFFICIENT_EVIDENCE.
+
+Return JSON with keys: answer, confidence, evidence_support, short_rationale."""
+
+
+def run_extraction_cascade(
+    df,
+    extractor_model_id="Qwen/Qwen2.5-3B-Instruct",
+    reader_model_ids=("Qwen/Qwen2.5-0.5B-Instruct",),
+    n_examples=30,
+    random_state=7,
+    max_evidence_chars=6000,
+    max_new_tokens=192,
+    include_raw_baseline=True,
+):
+    """Run the extractor once per example, then each reader over the bundles
+    (and optionally over raw evidence as the within-reader baseline)."""
+    base = df[df["has_numeric_answer"]].sample(
+        min(n_examples, int(df["has_numeric_answer"].sum())), random_state=random_state
+    ).reset_index(drop=True)
+
+    # Stage 1: extractor (never sees the gold answer).
+    extractor = load_hf_generator(
+        model_id=extractor_model_id, max_new_tokens=max_new_tokens,
+        load_in_4bit=auto_4bit(extractor_model_id),
+    )
+    bundles = []
+    for _, row in tqdm(base.iterrows(), total=len(base), desc="extractor"):
+        raw = call_hf_generator(extractor, make_extraction_prompt(row, max_evidence_chars))
+        bundle, support = parse_extraction(raw)
+        bundles.append({"bundle": bundle, "support_probability": support, "extractor_raw": raw})
+    del extractor
+    _free_accelerator()
+
+    # Stage 2: readers.
+    rows = []
+    for reader_id in reader_model_ids:
+        reader = load_hf_generator(
+            model_id=reader_id, max_new_tokens=max_new_tokens,
+            load_in_4bit=auto_4bit(reader_id),
+        )
+        for (_, row), b in tqdm(
+            list(zip(base.iterrows(), bundles)), desc=f"reader {reader_id.split('/')[-1]}"
+        ):
+            conditions = [("cascade_bundle",
+                           make_bundle_reader_prompt(row["question"], b["bundle"], b["support_probability"]))]
+            if include_raw_baseline:
+                conditions.append(("raw_gold_evidence",
+                                   make_prompt(row, with_evidence=True, max_evidence_chars=max_evidence_chars)))
+            for condition, prompt in conditions:
+                pred = call_hf_generator(reader, prompt)
+                scores = score_prediction(pred, row["answer"])
+                rows.append({
+                    "extractor_id": extractor_model_id,
+                    "reader_id": reader_id,
+                    "condition": condition,
+                    "financebench_id": row["financebench_id"],
+                    "question": row["question"],
+                    "gold_answer": row["answer"],
+                    "bundle": b["bundle"] if condition == "cascade_bundle" else "",
+                    "support_probability": b["support_probability"] if condition == "cascade_bundle" else None,
+                    "prediction": pred,
+                    **scores,
+                })
+        del reader
+        _free_accelerator()
+
+    results = pd.DataFrame(rows)
+    return results, summarize_cascade(results)
+
+
+def summarize_cascade(results):
+    """Per (reader, condition): accuracy, verbalized-ECE, inherited-ECE, support corr."""
+    out = []
+    for (reader_id, condition), g in results.groupby(["reader_id", "condition"]):
+        entry = {
+            "reader": reader_id.split("/")[-1],
+            "condition": condition,
+            "accuracy": g["weak_match_answer"].astype(float).mean(),
+            "numeric_accuracy": g["numeric_match_answer"].astype(float).mean(),
+            "refusal_rate": g["refusal"].astype(float).mean(),
+            "verbalized_ece": expected_calibration_error(g),
+            "n": len(g),
+        }
+        sp = g.dropna(subset=["support_probability"])
+        if len(sp) >= 3:
+            entry["inherited_ece"] = expected_calibration_error(
+                sp, confidence_col="support_probability"
+            )
+            corr = sp["support_probability"].astype(float).corr(
+                sp["weak_match_answer"].astype(float)
+            )
+            entry["support_corr"] = corr
+        out.append(entry)
+    return pd.DataFrame(out).sort_values(["reader", "condition"]).reset_index(drop=True)
