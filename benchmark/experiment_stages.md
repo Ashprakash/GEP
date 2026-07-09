@@ -477,7 +477,7 @@ Venue mapping:
 
 ## Immediate Next Step
 
-Run the compressed-evidence grounding probe:
+Run the compressed-evidence grounding probe and the template reliability comparison:
 
 ```python
 %cd /content
@@ -485,10 +485,28 @@ Run the compressed-evidence grounding probe:
 %cd /content/groundfin
 ```
 
-Then rerun **6. Grounding Probe** and paste the printed `=== PROBE SUMMARY ===` block.
+Then rerun:
+
+1. **6. Grounding Probe**
+2. **7. Template Reliability Comparison**
+
+Paste the printed `=== PROBE SUMMARY ===` and `=== TEMPLATE SUMMARY ===` blocks.
 
 The important comparison is:
 
 ```text
 gold_evidence vs evidence_compressed vs direct_grounded_evidence
+```
+
+The important method comparison is:
+
+```text
+raw_gold_evidence vs length_matched_summary vs deterministic_trace
+vs template_no_probabilities vs risk_calibrated_template
+```
+
+The risk-calibrated template must eventually improve reliability metrics, not just answer accuracy:
+
+```text
+brier_score, ece, overconfident_wrong_rate, refusal_rate
 ```

@@ -69,6 +69,24 @@ probe_summary.csv
 probe_results.csv
 ```
 
+## Template Reliability Comparison
+
+The runner notebook also includes **Template Reliability Comparison**, which tests the method-facing conditions:
+
+- `raw_gold_evidence`
+- `length_matched_summary`
+- `deterministic_trace`
+- `template_no_probabilities`
+- `risk_calibrated_template`
+- `missing_risk_template`
+
+It writes:
+
+```text
+template_summary.csv
+template_results.csv
+```
+
 ## Immediate Pilot Goal
 
 Run enough examples to answer:

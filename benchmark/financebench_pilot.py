@@ -135,6 +135,34 @@ def parse_model_answer(prediction):
     return text
 
 
+def parse_model_confidence(prediction):
+    text = str(prediction).strip()
+    cleaned = text
+    if cleaned.startswith("```"):
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
+
+    try:
+        obj = json.loads(cleaned)
+        if isinstance(obj, dict):
+            for key in ["confidence", "calibrated_confidence", "answer_confidence"]:
+                if key in obj:
+                    value = float(obj[key])
+                    return max(0.0, min(1.0, value))
+    except Exception:
+        pass
+
+    match = re.search(
+        r"(?:confidence|calibrated_confidence|answer_confidence)\s*[:=]\s*([01](?:\.\d+)?)",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    if match:
+        value = float(match.group(1))
+        return max(0.0, min(1.0, value))
+    return None
+
+
 def is_refusal(answer_text):
     normalized = normalize_text(answer_text)
     refusal_markers = [
@@ -150,13 +178,45 @@ def is_refusal(answer_text):
 
 def score_prediction(prediction, gold):
     answer_text = parse_model_answer(prediction)
+    confidence = parse_model_confidence(prediction)
+    weak_match = weak_answer_match(answer_text, gold)
+    numeric_match = numeric_close(answer_text, gold)
+    refusal = is_refusal(answer_text)
+    correctness = 1.0 if weak_match else 0.0
+    brier = None if confidence is None else (confidence - correctness) ** 2
     return {
         "parsed_answer": answer_text,
         "weak_match_raw": weak_answer_match(prediction, gold),
-        "weak_match_answer": weak_answer_match(answer_text, gold),
-        "numeric_match_answer": numeric_close(answer_text, gold),
-        "refusal": is_refusal(answer_text),
+        "weak_match_answer": weak_match,
+        "numeric_match_answer": numeric_match,
+        "refusal": refusal,
+        "confidence": confidence,
+        "brier": brier,
+        "overconfident_wrong": bool(confidence is not None and confidence >= 0.8 and not weak_match),
     }
+
+
+def expected_calibration_error(results, confidence_col="confidence", correctness_col="weak_match_answer", n_bins=5):
+    scored = results.dropna(subset=[confidence_col]).copy()
+    if scored.empty:
+        return None
+
+    ece = 0.0
+    total = len(scored)
+    for i in range(n_bins):
+        lower = i / n_bins
+        upper = (i + 1) / n_bins
+        if i == n_bins - 1:
+            mask = (scored[confidence_col] >= lower) & (scored[confidence_col] <= upper)
+        else:
+            mask = (scored[confidence_col] >= lower) & (scored[confidence_col] < upper)
+        bucket = scored[mask]
+        if bucket.empty:
+            continue
+        accuracy = bucket[correctness_col].astype(float).mean()
+        confidence = bucket[confidence_col].astype(float).mean()
+        ece += (len(bucket) / total) * abs(accuracy - confidence)
+    return ece
 
 
 def format_counterfactual_answer(answer, factor=1.37):
@@ -302,7 +362,11 @@ def summarize_probe_results(results, group_cols):
         "weak_match_answer",
         "numeric_match_answer",
         "refusal",
+        "confidence",
+        "brier",
+        "overconfident_wrong",
     ]
+    metric_cols = [col for col in metric_cols if col in results.columns]
     summary = results.groupby(group_cols)[metric_cols].mean()
     summary = summary.rename(
         columns={
@@ -310,10 +374,190 @@ def summarize_probe_results(results, group_cols):
             "weak_match_answer": "answer_weak_accuracy",
             "numeric_match_answer": "answer_numeric_accuracy",
             "refusal": "refusal_rate",
+            "confidence": "avg_confidence",
+            "brier": "brier_score",
+            "overconfident_wrong": "overconfident_wrong_rate",
         }
     )
     summary["n"] = results.groupby(group_cols).size()
+    ece = results.groupby(group_cols).apply(
+        lambda group: expected_calibration_error(group)
+    )
+    summary["ece"] = ece
     return summary
+
+
+def compact_evidence_for_row(row):
+    justification = row.get("justification", "")
+    if isinstance(justification, str) and justification.strip():
+        return justification.strip(), "financebench_justification"
+    return (
+        f"The answer to the question is {row['answer']}. "
+        "This is an oracle compact evidence proxy for debugging.",
+        "oracle_answer_fallback",
+    )
+
+
+def build_risk_calibrated_template(row, include_probabilities=True):
+    compact_evidence, source = compact_evidence_for_row(row)
+    answer = str(row["answer"])
+    nums = extract_numbers(answer)
+    variables = {}
+    if nums:
+        variables["primary_numeric_value"] = nums[0]
+
+    template = {
+        "template_label": "oracle_template",
+        "template_source": source,
+        "task": {
+            "question": row["question"],
+            "entity": row.get("company", ""),
+            "period": row.get("doc_period", ""),
+            "metric": row.get("question_type", ""),
+            "unit": "unknown",
+        },
+        "evidence_units": [
+            {
+                "claim": compact_evidence,
+                "source": row.get("doc_name", ""),
+            }
+        ],
+        "decision_variables": variables,
+        "computation": {
+            "formula": "not_provided",
+            "inputs": variables,
+            "result": answer,
+        },
+        "answer": answer,
+    }
+
+    if include_probabilities:
+        template["evidence_units"][0].update(
+            {
+                "relevance_probability": 0.98,
+                "support_probability": 0.98,
+                "temporal_validity_probability": 0.95,
+            }
+        )
+        template["answer_distribution"] = {
+            answer: 0.94,
+            "INSUFFICIENT_EVIDENCE": 0.03,
+            "other": 0.03,
+        }
+        template["calibrated_confidence"] = 0.94
+        template["abstain_probability"] = 0.03
+
+    return template
+
+
+def make_template_comparison_prompt(row, condition, max_evidence_chars=None):
+    question = row["question"]
+    target_instruction = "Return JSON with keys: answer, confidence, evidence_support, short_rationale."
+
+    if condition == "raw_gold_evidence":
+        evidence_text = row["evidence_text"]
+        if max_evidence_chars is not None and len(evidence_text) > max_evidence_chars:
+            evidence_text = evidence_text[:max_evidence_chars] + "\n\n[TRUNCATED]"
+        payload = f"Raw evidence:\n{evidence_text}"
+    elif condition == "length_matched_summary":
+        compact, source = compact_evidence_for_row(row)
+        payload = (
+            f"Length-matched compact summary ({source}):\n"
+            f"{compact}\n"
+            "This summary is not probabilistic. Use only the supplied summary."
+        )
+    elif condition == "deterministic_trace":
+        compact, source = compact_evidence_for_row(row)
+        payload = (
+            "Deterministic structured trace:\n"
+            f"source: {source}\n"
+            f"question: {question}\n"
+            f"evidence_claim: {compact}\n"
+            f"answer: {row['answer']}\n"
+            "Use the trace to answer. The trace has no uncertainty fields."
+        )
+    elif condition == "template_no_probabilities":
+        template = build_risk_calibrated_template(row, include_probabilities=False)
+        payload = (
+            "Grounded evidence template without probabilities:\n"
+            f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
+            "Use the template to answer."
+        )
+    elif condition == "risk_calibrated_template":
+        template = build_risk_calibrated_template(row, include_probabilities=True)
+        payload = (
+            "Risk-calibrated evidence template:\n"
+            f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
+            "Use the template to answer. Your confidence should reflect the answer_distribution and evidence support."
+        )
+    elif condition == "missing_risk_template":
+        template = {
+            "template_label": "rule_template",
+            "task": {"question": question},
+            "evidence_units": [],
+            "decision_variables": {},
+            "answer_distribution": {
+                "INSUFFICIENT_EVIDENCE": 0.94,
+                "other": 0.06,
+            },
+            "calibrated_confidence": 0.94,
+            "abstain_probability": 0.94,
+        }
+        payload = (
+            "Risk-calibrated evidence template:\n"
+            f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
+            "If evidence is insufficient, answer INSUFFICIENT_EVIDENCE."
+        )
+    else:
+        raise ValueError(f"Unknown template comparison condition: {condition}")
+
+    return f"""{SYSTEM_INSTRUCTION}
+
+Question:
+{question}
+
+{payload}
+
+{target_instruction}"""
+
+
+def build_template_comparison(df, n_examples=5, random_state=7):
+    base = df[df["has_numeric_answer"]].sample(
+        min(n_examples, int(df["has_numeric_answer"].sum())),
+        random_state=random_state,
+    )
+    conditions = [
+        "raw_gold_evidence",
+        "length_matched_summary",
+        "deterministic_trace",
+        "template_no_probabilities",
+        "risk_calibrated_template",
+        "missing_risk_template",
+    ]
+
+    rows = []
+    for _, row in base.iterrows():
+        for condition in conditions:
+            expected_behavior = "abstain" if condition == "missing_risk_template" else "answer"
+            target_answer = (
+                "INSUFFICIENT_EVIDENCE"
+                if expected_behavior == "abstain"
+                else row["answer"]
+            )
+            compact, source = compact_evidence_for_row(row)
+            rows.append(
+                {
+                    "financebench_id": row["financebench_id"],
+                    "condition": condition,
+                    "template_source": source if condition != "raw_gold_evidence" else "raw_evidence",
+                    "expected_behavior": expected_behavior,
+                    "question": row["question"],
+                    "gold_answer": row["answer"],
+                    "target_answer": target_answer,
+                    "prompt": make_template_comparison_prompt(row, condition),
+                }
+            )
+    return pd.DataFrame(rows)
 
 
 def has_numeric_answer(answer):
@@ -514,6 +758,7 @@ def run_hf_grounding_probe(
             {
                 "financebench_id": row["financebench_id"],
                 "condition": row["condition"],
+                "compression_source": row.get("compression_source", ""),
                 "expected_behavior": row["expected_behavior"],
                 "model_id": model_id,
                 "question": row["question"],
@@ -531,13 +776,90 @@ def run_hf_grounding_probe(
     return results, summary
 
 
+def run_hf_template_comparison(
+    df,
+    n_examples=3,
+    model_id="Qwen/Qwen2.5-0.5B-Instruct",
+    random_state=7,
+    max_new_tokens=160,
+):
+    generator = load_hf_generator(model_id=model_id, max_new_tokens=max_new_tokens)
+    comparison_df = build_template_comparison(
+        df, n_examples=n_examples, random_state=random_state
+    )
+
+    rows = []
+    for _, row in tqdm(comparison_df.iterrows(), total=len(comparison_df)):
+        pred = call_hf_generator(generator, row["prompt"])
+        scores = score_prediction(pred, row["target_answer"])
+        template_success = (
+            scores["refusal"]
+            if row["expected_behavior"] == "abstain"
+            else scores["weak_match_answer"]
+        )
+        rows.append(
+            {
+                "financebench_id": row["financebench_id"],
+                "condition": row["condition"],
+                "template_source": row["template_source"],
+                "expected_behavior": row["expected_behavior"],
+                "model_id": model_id,
+                "question": row["question"],
+                "gold_answer": row["gold_answer"],
+                "target_answer": row["target_answer"],
+                "prediction": pred,
+                "template_success": bool(template_success),
+                "weak_match": scores["weak_match_answer"],
+                **scores,
+            }
+        )
+
+    results = pd.DataFrame(rows)
+    summary = summarize_template_results(results, ["model_id", "condition"])
+    return results, summary
+
+
+def summarize_template_results(results, group_cols):
+    metric_cols = [
+        "template_success",
+        "weak_match_answer",
+        "numeric_match_answer",
+        "refusal",
+        "confidence",
+        "brier",
+        "overconfident_wrong",
+    ]
+    metric_cols = [col for col in metric_cols if col in results.columns]
+    summary = results.groupby(group_cols)[metric_cols].mean()
+    summary = summary.rename(
+        columns={
+            "template_success": "success_rate",
+            "weak_match_answer": "answer_weak_accuracy",
+            "numeric_match_answer": "answer_numeric_accuracy",
+            "refusal": "refusal_rate",
+            "confidence": "avg_confidence",
+            "brier": "brier_score",
+            "overconfident_wrong": "overconfident_wrong_rate",
+        }
+    )
+    summary["n"] = results.groupby(group_cols).size()
+    summary["ece"] = results.groupby(group_cols).apply(
+        lambda group: expected_calibration_error(group)
+    )
+    return summary
+
+
 def summarize_results(results, group_cols):
     metric_cols = [
         "weak_match_raw",
         "weak_match_answer",
         "numeric_match_answer",
         "refusal",
+        "confidence",
+        "brier",
+        "overconfident_wrong",
     ]
+    metric_cols = [col for col in metric_cols if col in results.columns]
     summary = results.groupby(group_cols)[metric_cols].mean()
     summary = summary.rename(
         columns={
@@ -545,9 +867,15 @@ def summarize_results(results, group_cols):
             "weak_match_answer": "weak_accuracy_answer",
             "numeric_match_answer": "numeric_accuracy_answer",
             "refusal": "refusal_rate",
+            "confidence": "avg_confidence",
+            "brier": "brier_score",
+            "overconfident_wrong": "overconfident_wrong_rate",
         }
     )
     summary["n"] = results.groupby(group_cols).size()
+    summary["ece"] = results.groupby(group_cols).apply(
+        lambda group: expected_calibration_error(group)
+    )
     return summary
 
 

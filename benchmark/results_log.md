@@ -133,3 +133,24 @@ Next action:
 Follow-up implementation:
 
 - Added `evidence_compressed` to the grounding probe using FinanceBench `justification` as a compact evidence proxy where available.
+
+## Next: Template Reliability Comparison
+
+The pipeline now includes a method-facing comparison across:
+
+- raw gold evidence,
+- length-matched summary,
+- deterministic trace,
+- template without probabilities,
+- full risk-calibrated template,
+- missing-evidence risk template.
+
+The important reliability metrics are:
+
+- Brier score,
+- ECE,
+- confidence,
+- overconfident-wrong rate,
+- refusal rate.
+
+This is still a prompt-time probe, not distillation or GRPO yet.
