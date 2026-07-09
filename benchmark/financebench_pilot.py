@@ -450,25 +450,191 @@ def build_risk_calibrated_template(row, include_probabilities=True):
     return template
 
 
-def make_template_comparison_prompt(row, condition, max_evidence_chars=None):
-    question = row["question"]
-    target_instruction = "Return JSON with keys: answer, confidence, evidence_support, short_rationale."
+# ---------------------------------------------------------------------------
+# No-leakage (deployment) template construction.
+#
+# The oracle helpers above intentionally embed the gold answer to measure an
+# upper bound. The functions below build templates from the raw evidence and
+# question metadata ONLY. They must never read row["answer"], so that the
+# main method claim is not answer-copying. This invariant is enforced by
+# test_no_leakage() and by build_template_comparison's audit column.
+# ---------------------------------------------------------------------------
 
-    if condition == "raw_gold_evidence":
-        evidence_text = row["evidence_text"]
-        if max_evidence_chars is not None and len(evidence_text) > max_evidence_chars:
-            evidence_text = evidence_text[:max_evidence_chars] + "\n\n[TRUNCATED]"
-        payload = f"Raw evidence:\n{evidence_text}"
-    elif condition == "length_matched_summary":
+STOPWORDS = {
+    "the", "a", "an", "of", "to", "in", "on", "for", "and", "or", "is", "are",
+    "was", "were", "what", "which", "how", "much", "many", "did", "does", "do",
+    "that", "this", "with", "as", "at", "by", "from", "its", "it", "be", "been",
+    "has", "have", "had", "s", "company", "year", "during", "period", "value",
+    "amount", "total", "please", "based",
+}
+
+
+def _tokens(text):
+    return [
+        t
+        for t in re.findall(r"[a-z0-9%.]+", str(text).lower())
+        if t not in STOPWORDS and len(t) > 1
+    ]
+
+
+def split_evidence_units(evidence_text, max_units=None):
+    """Split raw evidence into sentence-level units, keeping the doc source."""
+    if not evidence_text:
+        return []
+    blocks = [b.strip() for b in re.split(r"\n\s*\n", str(evidence_text)) if b.strip()]
+    units = []
+    for block in blocks:
+        source = ""
+        body = block
+        m = re.match(r"\[doc=([^\]]*?)(?:\s+page=[^\]]*)?\]\s*", block)
+        if m:
+            source = m.group(1).strip()
+            body = block[m.end():]
+        for sent in re.split(r"(?<=[.;])\s+(?=[A-Z0-9$(])", body):
+            sent = sent.strip()
+            if len(sent) >= 15:
+                units.append({"text": sent, "source": source})
+    if max_units:
+        return units[:max_units]
+    return units
+
+
+def rank_evidence_units(question, units):
+    """Rank evidence units by token overlap with the question (no answer used)."""
+    q = set(_tokens(question))
+    scored = []
+    for u in units:
+        toks = set(_tokens(u["text"]))
+        overlap = len(q & toks)
+        norm = overlap / max(1, len(q))
+        scored.append((norm, overlap, u))
+    scored.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    return scored
+
+
+def extractive_summary(question, evidence_text, max_sentences=4, max_chars=None):
+    """Length-matched compact summary drawn from raw evidence, no gold answer."""
+    units = split_evidence_units(evidence_text)
+    if not units:
+        return ""
+    scored = rank_evidence_units(question, units)
+    top = [u["text"] for _, _, u in scored[:max_sentences]]
+    summary = " ".join(top)
+    if max_chars and len(summary) > max_chars:
+        summary = summary[:max_chars] + " [TRUNCATED]"
+    return summary
+
+
+def build_rule_template(row, include_probabilities=True, max_units=6):
+    """No-leakage template built only from raw evidence and question metadata.
+
+    Never reads row["answer"]. The `answer` and `computation.result` fields are
+    left as TO_BE_DETERMINED for the model to fill from the evidence units.
+    Probabilities, when included, are heuristic priors derived from evidence
+    coverage and unit overlap, not from knowledge of the gold answer.
+    """
+    question = row["question"]
+    units = split_evidence_units(row.get("evidence_text", ""))
+    scored = rank_evidence_units(question, units)
+    kept = scored[:max_units]
+
+    q_tokens = set(_tokens(question))
+    covered = set()
+    evidence_units = []
+    candidate_values = []
+    for norm, _overlap, u in kept:
+        covered |= (set(_tokens(u["text"])) & q_tokens)
+        nums = extract_numbers(u["text"])
+        candidate_values.extend(nums[:4])
+        unit = {"claim": u["text"], "source": u["source"]}
+        if include_probabilities:
+            unit["relevance_probability"] = round(min(0.95, 0.35 + 0.6 * norm), 3)
+            unit["support_probability"] = round(
+                min(0.9, 0.3 + 0.5 * norm + 0.1 * (len(nums) > 0)), 3
+            )
+            unit["temporal_validity_probability"] = 0.8
+        evidence_units.append(unit)
+
+    coverage = len(covered) / max(1, len(q_tokens))
+    # De-duplicate candidate values while preserving order.
+    seen = set()
+    candidates = []
+    for v in candidate_values:
+        if v not in seen:
+            seen.add(v)
+            candidates.append(v)
+    candidates = candidates[:8]
+
+    template = {
+        "template_label": "rule_template",
+        "template_source": "rule_extraction_from_raw_evidence",
+        "task": {
+            "question": question,
+            "entity": row.get("company", ""),
+            "period": row.get("doc_period", ""),
+            "metric": row.get("question_type", ""),
+            "unit": "unknown",
+        },
+        "evidence_units": evidence_units,
+        "decision_variables": {"candidate_values_from_evidence": candidates},
+        "computation": {
+            "formula": "not_provided",
+            "inputs": {"candidate_values_from_evidence": candidates},
+            "result": "TO_BE_DETERMINED",
+        },
+        "answer": "TO_BE_DETERMINED",
+    }
+
+    if include_probabilities:
+        abstain = round(max(0.02, 0.6 - 0.5 * coverage), 3)
+        template["answer_distribution"] = {
+            "ANSWER_FROM_EVIDENCE": round(1 - abstain - 0.03, 3),
+            "INSUFFICIENT_EVIDENCE": abstain,
+            "other": 0.03,
+        }
+        template["calibrated_confidence"] = round(min(0.9, 0.4 + 0.5 * coverage), 3)
+        template["abstain_probability"] = abstain
+
+    return template
+
+
+def _raw_evidence_payload(row, max_evidence_chars):
+    evidence_text = row["evidence_text"]
+    if max_evidence_chars is not None and len(evidence_text) > max_evidence_chars:
+        evidence_text = evidence_text[:max_evidence_chars] + "\n\n[TRUNCATED]"
+    return f"Raw evidence:\n{evidence_text}"
+
+
+def _missing_template_payload(question):
+    template = {
+        "template_label": "rule_template",
+        "task": {"question": question},
+        "evidence_units": [],
+        "decision_variables": {},
+        "answer_distribution": {"INSUFFICIENT_EVIDENCE": 0.94, "other": 0.06},
+        "calibrated_confidence": 0.94,
+        "abstain_probability": 0.94,
+    }
+    return (
+        "Risk-calibrated evidence template:\n"
+        f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
+        "If evidence is insufficient, answer INSUFFICIENT_EVIDENCE."
+    )
+
+
+def _oracle_payload(row, condition):
+    """Upper-bound conditions that intentionally embed the gold answer."""
+    question = row["question"]
+    if condition == "length_matched_summary":
         compact, source = compact_evidence_for_row(row)
-        payload = (
+        return (
             f"Length-matched compact summary ({source}):\n"
             f"{compact}\n"
             "This summary is not probabilistic. Use only the supplied summary."
         )
-    elif condition == "deterministic_trace":
+    if condition == "deterministic_trace":
         compact, source = compact_evidence_for_row(row)
-        payload = (
+        return (
             "Deterministic structured trace:\n"
             f"source: {source}\n"
             f"question: {question}\n"
@@ -476,40 +642,82 @@ def make_template_comparison_prompt(row, condition, max_evidence_chars=None):
             f"answer: {row['answer']}\n"
             "Use the trace to answer. The trace has no uncertainty fields."
         )
-    elif condition == "template_no_probabilities":
+    if condition == "template_no_probabilities":
         template = build_risk_calibrated_template(row, include_probabilities=False)
-        payload = (
+        return (
             "Grounded evidence template without probabilities:\n"
             f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
             "Use the template to answer."
         )
-    elif condition == "risk_calibrated_template":
+    if condition == "risk_calibrated_template":
         template = build_risk_calibrated_template(row, include_probabilities=True)
-        payload = (
+        return (
             "Risk-calibrated evidence template:\n"
             f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
-            "Use the template to answer. Your confidence should reflect the answer_distribution and evidence support."
+            "Use the template to answer. Your confidence should reflect the "
+            "answer_distribution and evidence support."
         )
+    raise ValueError(f"Unknown oracle condition: {condition}")
+
+
+def _deployment_payload(row, condition, max_evidence_chars):
+    """No-leakage conditions built only from raw evidence and metadata."""
+    question = row["question"]
+    if condition == "length_matched_summary":
+        summary = extractive_summary(
+            question, row["evidence_text"], max_sentences=4, max_chars=max_evidence_chars
+        )
+        return (
+            "Length-matched extractive summary (top evidence sentences, no answer key):\n"
+            f"{summary}\n"
+            "This summary is not probabilistic. Use only the supplied summary."
+        )
+    if condition == "deterministic_trace":
+        template = build_rule_template(row, include_probabilities=False)
+        units_txt = "\n".join(f"- {u['claim']}" for u in template["evidence_units"])
+        return (
+            "Deterministic structured trace (extracted from raw evidence, "
+            "no uncertainty fields, no answer key):\n"
+            f"question: {question}\n"
+            f"entity: {template['task']['entity']}\n"
+            f"candidate_values: {template['decision_variables']['candidate_values_from_evidence']}\n"
+            f"evidence:\n{units_txt}\n"
+            "Compute the answer from the trace."
+        )
+    if condition == "template_no_probabilities":
+        template = build_rule_template(row, include_probabilities=False)
+        return (
+            "Grounded evidence template without probabilities:\n"
+            f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
+            "Fill the answer using the evidence_units."
+        )
+    if condition == "risk_calibrated_template":
+        template = build_rule_template(row, include_probabilities=True)
+        return (
+            "Risk-calibrated evidence template:\n"
+            f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
+            "Fill the answer using the evidence_units. Your confidence should "
+            "reflect the support_probability of the evidence and the abstain_probability."
+        )
+    raise ValueError(f"Unknown deployment condition: {condition}")
+
+
+def make_template_comparison_prompt(
+    row, condition, leakage_mode="deployment", max_evidence_chars=None
+):
+    question = row["question"]
+    target_instruction = "Return JSON with keys: answer, confidence, evidence_support, short_rationale."
+
+    if condition == "raw_gold_evidence":
+        payload = _raw_evidence_payload(row, max_evidence_chars)
     elif condition == "missing_risk_template":
-        template = {
-            "template_label": "rule_template",
-            "task": {"question": question},
-            "evidence_units": [],
-            "decision_variables": {},
-            "answer_distribution": {
-                "INSUFFICIENT_EVIDENCE": 0.94,
-                "other": 0.06,
-            },
-            "calibrated_confidence": 0.94,
-            "abstain_probability": 0.94,
-        }
-        payload = (
-            "Risk-calibrated evidence template:\n"
-            f"{json.dumps(template, ensure_ascii=False, indent=2)}\n"
-            "If evidence is insufficient, answer INSUFFICIENT_EVIDENCE."
-        )
+        payload = _missing_template_payload(question)
+    elif leakage_mode == "oracle":
+        payload = _oracle_payload(row, condition)
+    elif leakage_mode == "deployment":
+        payload = _deployment_payload(row, condition, max_evidence_chars)
     else:
-        raise ValueError(f"Unknown template comparison condition: {condition}")
+        raise ValueError(f"Unknown leakage_mode: {leakage_mode}")
 
     return f"""{SYSTEM_INSTRUCTION}
 
@@ -521,7 +729,25 @@ Question:
 {target_instruction}"""
 
 
-def build_template_comparison(df, n_examples=5, random_state=7):
+def _answer_injected(prompt, condition, gold_answer):
+    """Audit flag: did a non-raw condition inject the full gold-answer string?
+
+    The gold numeric value can legitimately appear inside raw_gold_evidence, so
+    that condition is exempt. For every other condition, the whole normalized
+    gold-answer string appearing verbatim indicates the answer was handed to
+    the model (expected in oracle mode, a leak in deployment mode).
+    """
+    if condition == "raw_gold_evidence":
+        return False
+    gold = normalize_text(gold_answer)
+    if len(gold) < 4:
+        return False
+    return gold in normalize_text(prompt)
+
+
+def build_template_comparison(
+    df, n_examples=5, random_state=7, leakage_mode="deployment", max_evidence_chars=6000
+):
     base = df[df["has_numeric_answer"]].sample(
         min(n_examples, int(df["has_numeric_answer"].sum())),
         random_state=random_state,
@@ -544,17 +770,29 @@ def build_template_comparison(df, n_examples=5, random_state=7):
                 if expected_behavior == "abstain"
                 else row["answer"]
             )
-            compact, source = compact_evidence_for_row(row)
+            if condition == "raw_gold_evidence":
+                source = "raw_evidence"
+            elif condition == "missing_risk_template":
+                source = "missing"
+            elif leakage_mode == "oracle":
+                source = compact_evidence_for_row(row)[1]
+            else:
+                source = "rule_extraction_from_raw_evidence"
+            prompt = make_template_comparison_prompt(
+                row, condition, leakage_mode=leakage_mode, max_evidence_chars=max_evidence_chars
+            )
             rows.append(
                 {
                     "financebench_id": row["financebench_id"],
                     "condition": condition,
-                    "template_source": source if condition != "raw_gold_evidence" else "raw_evidence",
+                    "leakage_mode": leakage_mode,
+                    "template_source": source,
                     "expected_behavior": expected_behavior,
                     "question": row["question"],
                     "gold_answer": row["answer"],
                     "target_answer": target_answer,
-                    "prompt": make_template_comparison_prompt(row, condition),
+                    "answer_injected": _answer_injected(prompt, condition, row["answer"]),
+                    "prompt": prompt,
                 }
             )
     return pd.DataFrame(rows)
@@ -782,10 +1020,16 @@ def run_hf_template_comparison(
     model_id="Qwen/Qwen2.5-0.5B-Instruct",
     random_state=7,
     max_new_tokens=160,
+    leakage_mode="deployment",
+    max_evidence_chars=6000,
 ):
     generator = load_hf_generator(model_id=model_id, max_new_tokens=max_new_tokens)
     comparison_df = build_template_comparison(
-        df, n_examples=n_examples, random_state=random_state
+        df,
+        n_examples=n_examples,
+        random_state=random_state,
+        leakage_mode=leakage_mode,
+        max_evidence_chars=max_evidence_chars,
     )
 
     rows = []
@@ -801,8 +1045,10 @@ def run_hf_template_comparison(
             {
                 "financebench_id": row["financebench_id"],
                 "condition": row["condition"],
+                "leakage_mode": row["leakage_mode"],
                 "template_source": row["template_source"],
                 "expected_behavior": row["expected_behavior"],
+                "answer_injected": row["answer_injected"],
                 "model_id": model_id,
                 "question": row["question"],
                 "gold_answer": row["gold_answer"],
@@ -901,3 +1147,180 @@ def export_pilot_files(df, prefix="financebench_pilot_flat"):
     pilot_export.to_csv(f"{prefix}.csv", index=False)
     pilot_export.to_json(f"{prefix}.jsonl", orient="records", lines=True)
     return f"{prefix}.csv", f"{prefix}.jsonl"
+
+
+# ---------------------------------------------------------------------------
+# Multi-seed / multi-model template comparison suite.
+#
+# Loads each model once, then sweeps leakage modes and seeds, reusing the
+# generator. Returns a flat per-example results frame plus aggregation helpers
+# that report mean +/- std across seeds for each (model, leakage_mode,
+# condition). This produces the paper-grade template reliability table.
+# ---------------------------------------------------------------------------
+
+TEMPLATE_METRIC_COLS = [
+    "template_success",
+    "weak_match_answer",
+    "numeric_match_answer",
+    "refusal",
+    "confidence",
+    "brier",
+    "overconfident_wrong",
+]
+
+
+def _free_accelerator():
+    try:
+        import gc
+
+        import torch
+
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except Exception:
+        pass
+
+
+def run_template_comparison_suite(
+    df,
+    model_ids=("Qwen/Qwen2.5-0.5B-Instruct", "Qwen/Qwen2.5-1.5B-Instruct"),
+    seeds=(7, 13, 29),
+    n_examples=50,
+    leakage_modes=("deployment", "oracle"),
+    max_new_tokens=160,
+    max_evidence_chars=6000,
+):
+    all_rows = []
+    for model_id in model_ids:
+        generator = load_hf_generator(model_id=model_id, max_new_tokens=max_new_tokens)
+        try:
+            for leakage_mode in leakage_modes:
+                for seed in seeds:
+                    comparison_df = build_template_comparison(
+                        df,
+                        n_examples=n_examples,
+                        random_state=seed,
+                        leakage_mode=leakage_mode,
+                        max_evidence_chars=max_evidence_chars,
+                    )
+                    short = model_id.split("/")[-1]
+                    for _, row in tqdm(
+                        comparison_df.iterrows(),
+                        total=len(comparison_df),
+                        desc=f"{short} {leakage_mode} seed{seed}",
+                    ):
+                        pred = call_hf_generator(generator, row["prompt"])
+                        scores = score_prediction(pred, row["target_answer"])
+                        success = (
+                            scores["refusal"]
+                            if row["expected_behavior"] == "abstain"
+                            else scores["weak_match_answer"]
+                        )
+                        all_rows.append(
+                            {
+                                "model_id": model_id,
+                                "leakage_mode": leakage_mode,
+                                "seed": seed,
+                                "financebench_id": row["financebench_id"],
+                                "condition": row["condition"],
+                                "template_source": row["template_source"],
+                                "expected_behavior": row["expected_behavior"],
+                                "answer_injected": row["answer_injected"],
+                                "question": row["question"],
+                                "gold_answer": row["gold_answer"],
+                                "target_answer": row["target_answer"],
+                                "prediction": pred,
+                                "template_success": bool(success),
+                                "weak_match": scores["weak_match_answer"],
+                                **scores,
+                            }
+                        )
+        finally:
+            del generator
+            _free_accelerator()
+
+    return pd.DataFrame(all_rows)
+
+
+def aggregate_template_suite(results, metric_cols=None):
+    """Aggregate suite results to mean +/- std across seeds.
+
+    Returns (agg, per_seed) where agg is indexed by
+    (model_id, leakage_mode, condition) with (metric, {mean,std}) columns.
+    """
+    if metric_cols is None:
+        metric_cols = TEMPLATE_METRIC_COLS
+    metric_cols = [c for c in metric_cols if c in results.columns]
+    group = ["model_id", "leakage_mode", "condition"]
+
+    per_seed = results.groupby(group + ["seed"])[metric_cols].mean()
+    ece = results.groupby(group + ["seed"]).apply(
+        lambda g: expected_calibration_error(g)
+    )
+    per_seed["ece"] = ece
+    per_seed["answer_injected_rate"] = results.groupby(group + ["seed"])[
+        "answer_injected"
+    ].mean()
+
+    agg = per_seed.groupby(group).agg(["mean", "std"])
+    agg["n_seeds"] = results.groupby(group)["seed"].nunique()
+    agg["n_rows"] = results.groupby(group).size()
+    return agg, per_seed
+
+
+def format_template_suite_table(agg, keys=None):
+    """Readable mean+/-std table for the headline reliability metrics."""
+    if keys is None:
+        keys = [
+            "template_success",
+            "confidence",
+            "brier",
+            "ece",
+            "overconfident_wrong",
+            "refusal",
+            "answer_injected_rate",
+        ]
+    rows = []
+    for idx, r in agg.iterrows():
+        model_id, leakage_mode, condition = idx
+        entry = {
+            "model": model_id.split("/")[-1],
+            "mode": leakage_mode,
+            "condition": condition,
+            "n_seeds": int(r[("n_seeds", "")]) if ("n_seeds", "") in agg.columns else "",
+        }
+        for k in keys:
+            if (k, "mean") in agg.columns:
+                m = r[(k, "mean")]
+                s = r[(k, "std")]
+                s = 0.0 if pd.isna(s) else s
+                entry[k] = f"{m:.3f}+/-{s:.3f}"
+        rows.append(entry)
+    order = {
+        "raw_gold_evidence": 0,
+        "length_matched_summary": 1,
+        "deterministic_trace": 2,
+        "template_no_probabilities": 3,
+        "risk_calibrated_template": 4,
+        "missing_risk_template": 5,
+    }
+    table = pd.DataFrame(rows)
+    table["_o"] = table["condition"].map(order).fillna(9)
+    table = table.sort_values(["model", "mode", "_o"]).drop(columns="_o")
+    return table.reset_index(drop=True)
+
+
+def check_deployment_leakage(df, n_examples=25, seed=7):
+    """Sanity check: no deployment condition injects the full gold answer.
+
+    Returns a small frame of any violations (should be empty).
+    """
+    comparison_df = build_template_comparison(
+        df, n_examples=n_examples, random_state=seed, leakage_mode="deployment"
+    )
+    violations = comparison_df[
+        (comparison_df["condition"] != "raw_gold_evidence")
+        & (comparison_df["answer_injected"])
+    ]
+    return violations[["financebench_id", "condition", "gold_answer"]]
