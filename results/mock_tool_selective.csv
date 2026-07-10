@@ -1,0 +1,2 @@
+method,acc@30,acc@50,acc@70,acc@100,aurc,n
+tool+grounded+selective (mock),0.833,0.8,0.857,0.7,0.182,20

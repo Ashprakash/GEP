@@ -1,0 +1,504 @@
+financebench_id,condition,model_id,question,gold_answer,prediction,weak_match,parsed_answer,weak_match_raw,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong
+financebench_id_06741,question_only,nvidia/Nemotron-Mini-4B-Instruct,What is the FY2018 - FY2020 3 year average unadjusted EBITDA % margin for Walmart? Define unadjusted EBITDA as unadjusted operating income + depreciation and amortization from the cash flow statement. Answer in units of percents and round to one decimal place. Calculate what was asked by utilizing the line items clearly shown in the P&L statement and the cash flow statement.,6.2%,"{
+  ""answer"": ""25.0"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question requires calculating the 3-year average unadjusted EBITDA % margin for Walmart. However, no financial data is provided in the question, so the answer cannot be calculated.""
+}",False,25.0,False,False,False,False,1.0,1.0,True
+financebench_id_06741,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What is the FY2018 - FY2020 3 year average unadjusted EBITDA % margin for Walmart? Define unadjusted EBITDA as unadjusted operating income + depreciation and amortization from the cash flow statement. Answer in units of percents and round to one decimal place. Calculate what was asked by utilizing the line items clearly shown in the P&L statement and the cash flow statement.,6.2%,{,False,{,False,False,False,False,,,False
+financebench_id_10136,question_only,nvidia/Nemotron-Mini-4B-Instruct,We want to calculate a financial metric. Please help us compute it by basing your answers off of the cash flow statement and the income statement. Here's the question: what is the FY2022 retention ratio (using total cash dividends paid and net income attributable to shareholders) for General Mills? Round answer to two decimal places.,0.54,"{
+  ""answer"": ""0.65"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Cash flow statement and income statement"",
+  ""short_rationale"": ""Retention ratio is calculated as total cash dividends paid divided by net income attributable to shareholders. Both are financial metrics provided in the income statement and cash flow statement.""
+}",False,0.65,False,False,False,False,0.9,0.81,True
+financebench_id_10136,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,We want to calculate a financial metric. Please help us compute it by basing your answers off of the cash flow statement and the income statement. Here's the question: what is the FY2022 retention ratio (using total cash dividends paid and net income attributable to shareholders) for General Mills? Round answer to two decimal places.,0.54,{,False,{,False,False,False,False,,,False
+financebench_id_00723,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Does AMEX have an improving operating margin profile as of 2022? If operating margin is not a useful metric for a company like this, then state that and explain why.",Performance is not measured through operating margin,"{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks about the operating margin profile of AMEX in 2022, but there is no evidence provided. Therefore, the answer cannot be determined.""
+}",False,INSUFFICIENT_EVIDENCE,False,False,False,True,0.9,0.81,True
+financebench_id_00723,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Does AMEX have an improving operating margin profile as of 2022? If operating margin is not a useful metric for a company like this, then state that and explain why.",Performance is not measured through operating margin,{,False,{,False,False,False,False,,,False
+financebench_id_00585,question_only,nvidia/Nemotron-Mini-4B-Instruct,How does Boeing's effective tax rate in FY2022 compare to FY2021?,"Effective tax rate in FY2022 was 0.62%, compared to  -14.76% in FY2021.","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for a comparison between FY2022 and FY2021, but there is no data provided in the context.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+financebench_id_00585,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,How does Boeing's effective tax rate in FY2022 compare to FY2021?,"Effective tax rate in FY2022 was 0.62%, compared to  -14.76% in FY2021.","{
+  ""answer"": ""The effective tax rate in FY2022 is higher than FY2021"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""The loss before income taxes in FY2022 is higher than FY2021"",
+  ""short_rationale"": ""The loss before income taxes is the sum of the loss from operations and other income, net. Since the loss from operations is also higher in FY2022, the effective tax rate is higher.""
+}",True,The effective tax rate in FY2022 is higher than FY2021,True,True,True,False,1.0,0.0,False
+financebench_id_00382,question_only,nvidia/Nemotron-Mini-4B-Instruct,Which region had the Highest EBITDAR Contribution for MGM during FY2022?,Las Vegas resorts contributed ~90% of company level EBITDAR during FY2022.,"{
+  ""answer"": ""North America"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""https://www.mgm.com/investors/financials/fy2022"",
+  ""short_rationale"": ""The evidence shows that MGM's highest EBITDAR contribution was in the North America region during FY2022.""
+}",False,North America,True,False,False,False,0.9,0.81,True
+financebench_id_00382,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Which region had the Highest EBITDAR Contribution for MGM during FY2022?,Las Vegas resorts contributed ~90% of company level EBITDAR during FY2022.,"{
+  ""answer"": ""Las Vegas Strip Resorts"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""Las Vegas Strip Resorts"",
+  ""short_rationale"": ""Highest EBITDAR contribution for MGM during FY2022 was Las Vegas Strip Resorts.""
+}",False,Las Vegas Strip Resorts,True,False,False,False,1.0,1.0,True
+financebench_id_00720,question_only,nvidia/Nemotron-Mini-4B-Instruct,"What drove gross margin change as of the FY2022 for American Express? If gross margin is not a useful metric for a company like this, then please state that and explain why.",Performance is not measured through gross margin,"{
+  ""answer"": ""Investment in digital transformation and customer experience"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""American Express has been investing heavily in digital transformation and customer experience to enhance its offerings and differentiate itself from competitors. This investment has led to a growth in gross margin as of FY2022."",
+  ""short_rationale"": ""Investment in digital transformation and customer experience drove the growth in gross margin for American Express.""
+}",False,Investment in digital transformation and customer experience,False,False,False,False,0.9,0.81,True
+financebench_id_00720,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"What drove gross margin change as of the FY2022 for American Express? If gross margin is not a useful metric for a company like this, then please state that and explain why.",Performance is not measured through gross margin,{,False,{,False,False,False,False,,,False
+financebench_id_01275,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Best Buy in FY2023?",Best Buy generated the most cash flow from operating activities in FY 2023 ($1.8 bn),"{
+  ""answer"": ""investing"",
+  ""confidence"": 1,
+  ""evidence_support"": ""Best Buy's FY2023 10-K states on page 10 that 'Operating activities provided cash flows of $10.5 billion, investing activities provided cash flows of $1.5 billion, and financing activities provided cash flows of $1.2 billion.'"",
+  ""short_rationale"": ""Investing activities brought in the most cash flow for Best Buy in FY2023.""
+}",False,investing,True,False,False,False,1.0,1.0,True
+financebench_id_01275,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Best Buy in FY2023?",Best Buy generated the most cash flow from operating activities in FY 2023 ($1.8 bn),{,False,{,False,False,False,False,,,False
+financebench_id_00299,question_only,nvidia/Nemotron-Mini-4B-Instruct,Which of JPM's business segments had the lowest net revenue in 2021 Q1?,Corporate. Its net revenue was -$473 million.,"{
+  ""answer"": ""INVESTMENT_INVESTMENT_GOVERNMENT_AND_PROFESSIONAL_SERVICES"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""INSUFFICIENT_EVIDENCE"",
+  ""short_rationale"": ""No evidence is provided to answer this question.""
+}",False,INVESTMENT_INVESTMENT_GOVERNMENT_AND_PROFESSIONAL_SERVICES,False,False,False,False,0.9,0.81,True
+financebench_id_00299,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Which of JPM's business segments had the lowest net revenue in 2021 Q1?,Corporate. Its net revenue was -$473 million.,{,False,{,False,False,False,False,,,False
+financebench_id_07507,question_only,nvidia/Nemotron-Mini-4B-Instruct,What is Adobe's year-over-year change in unadjusted operating income from FY2015 to FY2016 (in units of percents and round to one decimal place)? Give a solution to the question by using the income statement.,65.4%,"{
+  ""answer"": ""1.2"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""https://investor.adobe.com/financials/historical-data/operating-income"",
+  ""short_rationale"": ""The year-over-year change in unadjusted operating income from FY2015 to FY2016 can be found in the Adobe's income statement. The answer is 1.2%.""
+}",False,1.2,False,False,False,False,0.9,0.81,True
+financebench_id_07507,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What is Adobe's year-over-year change in unadjusted operating income from FY2015 to FY2016 (in units of percents and round to one decimal place)? Give a solution to the question by using the income statement.,65.4%,{,False,{,False,False,False,False,,,False
+financebench_id_01077,question_only,nvidia/Nemotron-Mini-4B-Instruct,"What are major acquisitions that Best Buy has done in FY2023, FY2022 and FY2021?","Best Buy closed two acquisitions, both these companies were already partially owned by Best Buy, but Best Buy acquired all outstanding shares of these two companies during FY 2022: (1) Current Health Ltd and (2) Two Peaks, LLC d/b/a Yardbird Furniture","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks about Best Buy's major acquisitions in FY2023, FY2022, and FY2021, but there is no evidence provided in the request to answer this question.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+financebench_id_01077,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"What are major acquisitions that Best Buy has done in FY2023, FY2022 and FY2021?","Best Buy closed two acquisitions, both these companies were already partially owned by Best Buy, but Best Buy acquired all outstanding shares of these two companies during FY 2022: (1) Current Health Ltd and (2) Two Peaks, LLC d/b/a Yardbird Furniture","{
+  ""answer"": ""Current Health Ltd. and Two Peaks, LLC d/b/a Yardbird Furniture"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""Acquisitions"",
+  ""short_rationale"": ""The provided document lists the acquisitions made by Best Buy in FY2023, FY2022, and FY2021.""
+}",False,"Current Health Ltd. and Two Peaks, LLC d/b/a Yardbird Furniture",True,False,False,False,1.0,1.0,True
+financebench_id_01107,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Has CVS Health reported any materially important ongoing legal battles from 2022, 2021 and 2020?","Yes, CVS Health has been involved in multiple ongoing legal battles. Some notable legal dispute areas for CVS are: (1) usual and customary pricing litigation: where it's claimed that CVSâs retail pharmacies overcharged for prescription drugs; (2) PBM litigation and investigations: where it's claimed that that rebate agreements between the drug manufacturers and PBMs caused inflated prices for certain drug products; and (3) controlled substances litigation: legal matters around opioids for which CVS has agreed to pay up to $4.3 billion to claimants in remediation and $625 million to attorneys and fees","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks about legal battles reported by CVS Health in 2022, 2021, and 2020. Without evidence, it's impossible to provide an accurate answer.""
+}",False,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+financebench_id_01107,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Has CVS Health reported any materially important ongoing legal battles from 2022, 2021 and 2020?","Yes, CVS Health has been involved in multiple ongoing legal battles. Some notable legal dispute areas for CVS are: (1) usual and customary pricing litigation: where it's claimed that CVSâs retail pharmacies overcharged for prescription drugs; (2) PBM litigation and investigations: where it's claimed that that rebate agreements between the drug manufacturers and PBMs caused inflated prices for certain drug products; and (3) controlled substances litigation: legal matters around opioids for which CVS has agreed to pay up to $4.3 billion to claimants in remediation and $625 million to attorneys and fees","{
+  ""answer"": ""yes"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""The Company is facing multiple lawsuits, including by state Attorneys General, governmental subdivisions and several putative class actions, regarding drug pricing and its rebate arrangements with drug manufacturers."",
+  ""short_rationale"": ""The passage states that the Company is facing multiple lawsuits regarding drug pricing and its rebate arrangements with drug manufacturers, which are materially important ongoing legal battles.""
+}",False,yes,False,False,False,False,0.9,0.81,True
+financebench_id_00956,question_only,nvidia/Nemotron-Mini-4B-Instruct,Are JnJ's FY2022 financials that of a high growth company?,"No, JnJ's FY2022 financials are not of a high growth company as sales grew by 1.3% in FY2022.","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for the financial performance of Johnson & Johnson (JnJ) in FY2022, but there is no evidence provided in the question to assess its growth.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+financebench_id_00956,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Are JnJ's FY2022 financials that of a high growth company?,"No, JnJ's FY2022 financials are not of a high growth company as sales grew by 1.3% in FY2022.","{
+  ""answer"": ""NO"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Sales increase/(decrease) due to: 2022; 2021"",
+  ""short_rationale"": ""The evidence shows that JnJ's FY2022 sales increased by 1.3%, while in FY2021, sales increased by 13.6%. This indicates that JnJ's FY2022 sales were not as high as a high growth company's, as high growth companies typically have significantly higher sales growth rates.""
+}",False,NO,True,False,False,False,0.9,0.81,True
+financebench_id_00995,question_only,nvidia/Nemotron-Mini-4B-Instruct,What are the major products and services that AMD sells as of FY22?,"AMD sells server microprocessors (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for data centers; CPUs, accelerated processing units (APUs) that integrate CPUs and GPUs, and chipsets for desktop and notebook personal computers; discrete GPUs, and semi-custom SoC products and development services; and embedded CPUs, GPUs, APUs, FPGAs, and Adaptive SoC products.","{
+  ""answer"": ""AMD's major products and services as of FY22 include CPUs, GPUs, and Memory Solutions."",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""https://www.amd.com/en/products/cpu"",
+  ""short_rationale"": ""AMD's official website states that they offer CPUs, GPUs, and Memory Solutions.""
+}",False,"AMD's major products and services as of FY22 include CPUs, GPUs, and Memory Solutions.",False,False,False,False,0.9,0.81,True
+financebench_id_00995,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What are the major products and services that AMD sells as of FY22?,"AMD sells server microprocessors (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for data centers; CPUs, accelerated processing units (APUs) that integrate CPUs and GPUs, and chipsets for desktop and notebook personal computers; discrete GPUs, and semi-custom SoC products and development services; and embedded CPUs, GPUs, APUs, FPGAs, and Adaptive SoC products.","{
+  ""answer"": ""server microprocessors (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for data centers, CPUs, APUs, discrete GPUs, semi-custom SoC products, and development services"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Overview"",
+  ""short_rationale"": ""The provided evidence, specifically the Overview section of AMD's FY22 10K, lists the major products and services that AMD sells.""
+}",False,"server microprocessors (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for data centers, CPUs, APUs, discrete GPUs, semi-custom SoC products, and development services",False,False,False,False,0.9,0.81,True
+financebench_id_00407,question_only,nvidia/Nemotron-Mini-4B-Instruct,Which type of debt received the largest investment among the short term investments for MGM in H1 FY2023?,the biggest short term investment is in corporate bonds (almost 82% of the total investment),"{
+  ""answer"": ""Unsecured debt"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Financial Results for the Six Months Ended March 31, 2023"",
+  ""short_rationale"": ""The Financial Results for the Six Months Ended March 31, 2023 shows that MGM received the largest investment among the short term investments for the period in unsecured debt.""
+}",False,Unsecured debt,False,False,False,False,0.9,0.81,True
+financebench_id_00407,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Which type of debt received the largest investment among the short term investments for MGM in H1 FY2023?,the biggest short term investment is in corporate bonds (almost 82% of the total investment),"{
+  ""answer"": ""Corporate bonds"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""Short-term investments"",
+  ""short_rationale"": ""The largest investment among the short term investments for MGM in H1 FY2023 was in Corporate bonds, which had a total of $509,921 invested as of December 31, 2022. This is significantly higher than the investments in U.S. government securities ($57,696) and U.S. agency securities ($29,049), which were the other two types of short-term investments mentioned in the provided evidence.""
+}",True,Corporate bonds,False,True,False,False,1.0,0.0,False
+financebench_id_01928,question_only,nvidia/Nemotron-Mini-4B-Instruct,What Was AMCOR's Adjusted Non GAAP EBITDA for FY 2023,"AMCOR's Adj. EBITDA was $2,018mn in FY 2023","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for AMCOR's Adjusted Non GAAP EBITDA for FY 2023, but there is no evidence provided in the question.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+financebench_id_01928,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What Was AMCOR's Adjusted Non GAAP EBITDA for FY 2023,"AMCOR's Adj. EBITDA was $2,018mn in FY 2023",{,False,{,False,False,False,False,,,False
+financebench_id_10130,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Based on the information provided primarily in the balance sheet and the statement of income, what is FY2020 days payable outstanding (DPO) for Corning? DPO is defined as: 365 * (average accounts payable between FY2019 and FY2020) / (FY2020 COGS + change in inventory between FY2019 and FY2020). Round your answer to two decimal places.",63.86,"{
+  ""answer"": ""0.00"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The formula for DPO requires information from the balance sheet and the statement of income, but no such information is provided.""
+}",False,0.00,False,False,False,False,0.0,0.0,False
+financebench_id_10130,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Based on the information provided primarily in the balance sheet and the statement of income, what is FY2020 days payable outstanding (DPO) for Corning? DPO is defined as: 365 * (average accounts payable between FY2019 and FY2020) / (FY2020 COGS + change in inventory between FY2019 and FY2020). Round your answer to two decimal places.",63.86,{,False,{,False,False,False,False,,,False
+financebench_id_01912,question_only,nvidia/Nemotron-Mini-4B-Instruct,Which region had the worst topline performance for MGM during FY2022?,MGM China experienced the worst topline performance amongst the other regions presented. Its revenue declined 44% in FY2022 whereas the other regions presented increased their revenues.,"{
+  ""answer"": ""West"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""MGM's FY2022 financial report"",
+  ""short_rationale"": ""The evidence shows that the West region had the worst topline performance among MGM's regions during FY2022.""
+}",False,West,True,False,False,False,0.9,0.81,True
+financebench_id_01912,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Which region had the worst topline performance for MGM during FY2022?,MGM China experienced the worst topline performance amongst the other regions presented. Its revenue declined 44% in FY2022 whereas the other regions presented increased their revenues.,"{
+  ""answer"": ""Las Vegas Strip Resorts"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Net revenues of $8.4 billion in the current year compared to $4.7 billion in the prior year, an increase of 77%"",
+  ""short_rationale"": ""The Las Vegas Strip Resorts had the highest net revenues among the regions, increasing by 77% compared to the prior year.""
+}",False,Las Vegas Strip Resorts,False,False,False,False,0.9,0.81,True
+financebench_id_00521,question_only,nvidia/Nemotron-Mini-4B-Instruct,What are major acquisitions that Ulta Beauty has done in FY2023 and FY2022?,Ulta Beauty did not make any acquisitions in FY2023 and FY2022.,"{
+  ""answer"": ""Ulta Beauty has not made any major acquisitions in FY2023 or FY2022 as of now."",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""No evidence is provided in the question."",
+  ""short_rationale"": ""The question does not provide any information about major acquisitions made by Ulta Beauty in FY2023 or FY2022, so the answer is based on the absence of evidence.""
+}",True,Ulta Beauty has not made any major acquisitions in FY2023 or FY2022 as of now.,True,True,True,False,0.9,0.009999999999999995,False
+financebench_id_00521,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What are major acquisitions that Ulta Beauty has done in FY2023 and FY2022?,Ulta Beauty did not make any acquisitions in FY2023 and FY2022.,"{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""The provided evidence does not contain information about major acquisitions made by Ulta Beauty in FY2023 and FY2022."",
+  ""short_rationale"": ""The evidence does not provide information about major acquisitions made by Ulta Beauty in the specified fiscal years.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+financebench_id_04254,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Basing your judgments off of the cash flow statement and the income statement, what is American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA) in USD millions?",$1832.00,"{
+  ""answer"": 100,
+  ""confidence"": 1,
+  ""evidence_support"": ""Cash flow statement and income statement"",
+  ""short_rationale"": ""The unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA) is calculated by adding the operating income and depreciation and amortization from the income statement to the cash flow statement.""
+}",False,100,False,False,False,False,1.0,1.0,True
+financebench_id_04254,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Basing your judgments off of the cash flow statement and the income statement, what is American Water Works's FY2021 unadjusted operating income + depreciation and amortization from the cash flow statement (unadjusted EBITDA) in USD millions?",$1832.00,{,False,{,False,False,False,False,,,False
+financebench_id_00757,question_only,nvidia/Nemotron-Mini-4B-Instruct,Did AMD report customer concentration in FY22?,"Yes, one customer accounted for 16% of consolidated net revenue","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks about customer concentration in FY22, but there is no evidence provided in the question itself.""
+}",False,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+financebench_id_00757,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Did AMD report customer concentration in FY22?,"Yes, one customer accounted for 16% of consolidated net revenue","{
+  ""answer"": ""yes"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""INSUFFICIENT_EVIDENCE"",
+  ""short_rationale"": ""The evidence directly states that one customer accounted for 16% of AMD's consolidated net revenue in FY22, indicating a high level of customer concentration.""
+}",False,yes,True,False,False,False,0.9,0.81,True
+financebench_id_03471,question_only,nvidia/Nemotron-Mini-4B-Instruct,"By drawing conclusions from the information stated only in the statement of financial position, what is General Mills's FY2020 working capital ratio? Define working capital ratio as total current assets divided by total current liabilities. Round your answer to two decimal places.",0.68,"{
+  ""answer"": 1.25,
+  ""confidence"": 0.9,
+  ""evidence_support"": ""General Mills's FY2020 statement of financial position shows that its total current assets are $10,000,000 and its total current liabilities are $8,000,000. The working capital ratio is calculated as total current assets divided by total current liabilities, which is $10,000,000 / $8,000,000 = 1.25."",
+  ""short_rationale"": ""The working capital ratio is calculated as total current assets divided by total current liabilities.""
+}",False,1.25,False,False,False,False,0.9,0.81,True
+financebench_id_03471,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"By drawing conclusions from the information stated only in the statement of financial position, what is General Mills's FY2020 working capital ratio? Define working capital ratio as total current assets divided by total current liabilities. Round your answer to two decimal places.",0.68,{,False,{,False,False,False,False,,,False
+financebench_id_01009,question_only,nvidia/Nemotron-Mini-4B-Instruct,What are the geographies that Pepsico primarily operates in as of FY2022?,"As of FY2022, Pepsico primarily operates in the following geographies: North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand and China.","{
+  ""answer"": ""North America, Latin America, Europe, Asia-Pacific, Africa, Middle East"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""https://www.pepsico.com/about-us/financials/fy2022"",
+  ""short_rationale"": ""The provided financial report for FY2022 states that Pepsico operates in North America, Latin America, Europe, Asia-Pacific, Africa, and Middle East.""
+}",False,"North America, Latin America, Europe, Asia-Pacific, Africa, Middle East",True,False,False,False,1.0,1.0,True
+financebench_id_01009,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What are the geographies that Pepsico primarily operates in as of FY2022?,"As of FY2022, Pepsico primarily operates in the following geographies: North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand and China.","{
+  ""answer"": ""North America, Latin America, Europe, Africa, Middle East and South Asia, Asia Pacific, Australia and New Zealand and China Region"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""doc=PEPSICO_2022_10K page=3"",
+  ""short_rationale",False,"North America, Latin America, Europe, Africa, Middle East and South Asia, Asia Pacific, Australia and New Zealand and China Region",True,False,False,False,,,False
+financebench_id_01290,question_only,nvidia/Nemotron-Mini-4B-Instruct,Who are the primary customers of Boeing as of FY2022?,Boeing's primary customers as of FY2022 are a limited number of commercial airlines and the US government. The US government accounted for 40% of Boeing's total revenues in FY2022.,"{
+  ""answer"": ""Commercial airlines and governments"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Boeing's FY2022 financial report shows that the majority of its revenue comes from commercial airlines and governments. Specifically, the report states that Boeing sold $100.5 billion worth of commercial airplanes and $25.5 billion worth of defense, space, and security products in FY2022. The commercial airplane sales accounted for 60% of Boeing's total revenue, while the defense, space, and security products sales accounted for 25%."",
+  ""short_rationale"": ""Boeing's FY2022 financial report indicates that commercial airlines and governments are the primary customers of Boeing.""",False,Commercial airlines and governments,True,False,False,False,,,False
+financebench_id_01290,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Who are the primary customers of Boeing as of FY2022?,Boeing's primary customers as of FY2022 are a limited number of commercial airlines and the US government. The US government accounted for 40% of Boeing's total revenues in FY2022.,"{
+  ""answer"": ""commercial airlines"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""BOEING_2022_10K page=7"",
+  ""short_rationale"": ""The document states that Boeing derives a significant portion of its revenues from a limited number of commercial airlines.""
+}",True,commercial airlines,True,True,False,False,0.9,0.009999999999999995,False
+financebench_id_04980,question_only,nvidia/Nemotron-Mini-4B-Instruct,What is the FY2021 capital expenditure amount (in USD billions) for PepsiCo? Respond to the question by assuming the perspective of an investment analyst who can only use the details shown within the statement of cash flows.,$4.60,"{
+  ""answer"": 0,
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for the FY2021 capital expenditure amount for PepsiCo, but there is no financial statement or data provided in the context.""
+}",False,0,False,False,False,False,0.0,0.0,False
+financebench_id_04980,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What is the FY2021 capital expenditure amount (in USD billions) for PepsiCo? Respond to the question by assuming the perspective of an investment analyst who can only use the details shown within the statement of cash flows.,$4.60,"{
+  ""answer"": ""4.6"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Operating Activities"",
+  ""short_rationale"":",True,4.6,True,True,True,False,,,False
+financebench_id_01476,question_only,nvidia/Nemotron-Mini-4B-Instruct,"As of FY2023Q1, by how many percentage points did Pepsico raise full year guidance in respect of core constant currency EPS growth?",Pepsico raised full year guidance in respect of core constant currency EPS growth by 1 percentage point.,"{
+  ""answer"": ""10"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""https://www.pepsico.com/investor-relations/financials/earnings-releases/earnings-release-detail?releaseId=2023-Q1-EPS"",
+  ""short_rationale"": ""The guidance increase is stated in the Pepsico FY2023Q1 earnings release.""
+}",False,10,True,False,False,False,0.9,0.81,True
+financebench_id_01476,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"As of FY2023Q1, by how many percentage points did Pepsico raise full year guidance in respect of core constant currency EPS growth?",Pepsico raised full year guidance in respect of core constant currency EPS growth by 1 percentage point.,"{
+  ""answer"": ""3"",
+  ""confidence"": 1,
+  ""evidence_support"": ""We are very pleased with our performance and business momentum as our categories and geographies remained resilient during the first quarter. Given our strong start to the year, we now expect our full-year 2023 organic revenue to increase 8 percent (previously 6 percent) and core constant currency EPS to increase 9 percent (previously 8 percent), said Chairman and CEO Ramon Laguarta."",
+  ""short_rationale"": ""The guidance was raised by 3 percentage points.""
+}",False,3,True,False,False,False,1.0,1.0,True
+financebench_id_00601,question_only,nvidia/Nemotron-Mini-4B-Instruct,What drove the reduction in SG&A expense as a percent of net sales in FY2023?,"Lower marketing expenses and leverage of incentive compensation due to higher sales. The answer here assumes FY2023 refers to the 12 months ended on January 28, 2023 (although the company refers to this period as its fiscal 2022.","{
+  ""answer"": ""Improved operational efficiency"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""The company reported a decrease in SG&A expense as a percentage of net sales in FY2023, which was attributed to improved operational efficiency."",
+  ""short_rationale"": ""The decrease in SG&A expense was due to better operational performance.""
+}",False,Improved operational efficiency,True,False,False,False,0.9,0.81,True
+financebench_id_00601,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What drove the reduction in SG&A expense as a percent of net sales in FY2023?,"Lower marketing expenses and leverage of incentive compensation due to higher sales. The answer here assumes FY2023 refers to the 12 months ended on January 28, 2023 (although the company refers to this period as its fiscal 2022.","{
+  ""answer"": ""increased marketing expenses"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""SG&A expenses increased 16.2% to $2.4 billion compared to $2.1 billion in fiscal 2021."",
+  ""short_rationale"": ""The increase in SG&A expenses is primarily due to higher marketing expenses.""
+}",False,increased marketing expenses,True,False,False,False,0.9,0.81,True
+financebench_id_00394,question_only,nvidia/Nemotron-Mini-4B-Instruct,"In 2022 Q2, which of JPM's business segments had the highest net income?",Corporate & Investment Bank. Its net income was $3725 million.,"{
+  ""answer"": ""Investment Banking"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""JPMorgan Chase & Co. (JPM) reported its second-quarter 2022 earnings on August 18, 2022. The net income for the quarter was $10.2 billion, with the largest contribution coming from the Investment Banking segment, which reported a net income of $3.9 billion."",
+  ""short_rationale"": ""Investment Banking had the highest net income in 2022 Q2.""
+}",False,Investment Banking,False,False,False,False,0.9,0.81,True
+financebench_id_00394,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"In 2022 Q2, which of JPM's business segments had the highest net income?",Corporate & Investment Bank. Its net income was $3725 million.,{,False,{,False,False,False,False,,,False
+financebench_id_00822,question_only,nvidia/Nemotron-Mini-4B-Instruct,Were there any board member nominees who had substantially more votes against joining than the other nominees?,"Yes, his name is Richard A. Johnson","{
+  ""answer"": ""No"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""No evidence provided"",
+  ""short_rationale"": ""No information about the number of votes against joining for any board member nominees.""
+}",False,No,False,False,False,False,0.9,0.81,True
+financebench_id_00822,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Were there any board member nominees who had substantially more votes against joining than the other nominees?,"Yes, his name is Richard A. Johnson","{
+  ""answer"": ""yes"",
+  ""confidence"": 1,
+  ""evidence_support"": ""the votes were cast for the proposal as set forth below: \nName \nVotes For \nVotes Against \nAbstentions \nBroker Non-Votes\n\nAlan D. Feldman \n54,760,830 \n5,184,437 \n10,721,716 \n6,884,223\n\nRichard A. Johnson \n54,484,293 \n16,105,005 \n77,685 \n6,884,223\n\nGuillermo G. Marmol \n54,193,921 \n5,753,395 \n10,719,667 \n6,884,223\n\nDarlene Nicosia \n55,123,930 \n4",False,yes,False,False,False,False,,,False
+financebench_id_03031,question_only,nvidia/Nemotron-Mini-4B-Instruct,What is Lockheed Martin's FY2021 net working capital? Define net working capital as total current assets less total current liabilities. Answer in USD millions. Respond to the question by assuming the perspective of an investment analyst who can only use the details shown within the balance sheet.,$5818.00,"{
+  ""answer"": 0,
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for Lockheed Martin's FY2021 net working capital, which is defined as total current assets less total current liabilities. However, no balance sheet data is provided, making it impossible to calculate net working capital.""
+}",False,0,False,False,False,False,0.0,0.0,False
+financebench_id_03031,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What is Lockheed Martin's FY2021 net working capital? Define net working capital as total current assets less total current liabilities. Answer in USD millions. Respond to the question by assuming the perspective of an investment analyst who can only use the details shown within the balance sheet.,$5818.00,"{
+  ""answer"": 10,
+  ""confidence"": 0.99,
+  ""evidence_support"": ""Table of Contents"",
+  ""short_rationale"": ""Net working capital is calculated as total current assets less total current liabilities. Lockheed Martin's FY2021 net working capital is $19,815 - $13,997 = $6,818 million.""
+}",False,10,False,False,False,False,0.99,0.9801,True
+financebench_id_00605,question_only,nvidia/Nemotron-Mini-4B-Instruct,What percent of Ulta Beauty's total spend on stock repurchases for FY 2023 occurred in Q4 of FY2023?,"36%. The answer here assumes FY2023 refers to the 12 months ended on January 28, 2023 (although the company refers to this period as its fiscal 2022.","{
+  ""answer"": 0,
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for the percentage of Ulta Beauty's total spend on stock repurchases in Q4 of FY2023, but there is no data provided in the question.""
+}",False,0,True,False,False,False,0.0,0.0,False
+financebench_id_00605,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What percent of Ulta Beauty's total spend on stock repurchases for FY 2023 occurred in Q4 of FY2023?,"36%. The answer here assumes FY2023 refers to the 12 months ended on January 28, 2023 (although the company refers to this period as its fiscal 2022.","{
+  ""answer"": 50,
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Share Repurchase Program"",
+  ""short_rationale"": ""The evidence shows that 722,457 shares were repurchased in Q4 of FY2023, and the total spend on stock repurchases for FY 2023 was $900.0 million. Therefore, 50% of the total spend occurred in Q4.""
+}",False,50,True,False,False,False,0.9,0.81,True
+financebench_id_00705,question_only,nvidia/Nemotron-Mini-4B-Instruct,"By how much did Pepsico increase its unsecured five year revolving credit agreement on May 26, 2023?","$400,000,000 increase.","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for the increase in unsecured five-year revolving credit agreement, but there is no information about this agreement or its changes in the provided evidence.""
+}",False,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+financebench_id_00705,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"By how much did Pepsico increase its unsecured five year revolving credit agreement on May 26, 2023?","$400,000,000 increase.","{
+  ""answer"": ""70000000"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""The 2023 Five Year Credit Agreement enables PepsiCo and its borrowing subsidiaries to borrow up to $4,200,000,000 in U.S. Dollars and/or Euros, including a $750,000,000 swing line facility for Euro-denominated borrowings permitted to be borrowed on a same day basis."",
+  ""short_rationale"": ""The increase in the unsecured five-year revolving credit agreement is $750,000,000.""
+}",False,70000000,False,False,False,False,0.9,0.81,True
+financebench_id_00839,question_only,nvidia/Nemotron-Mini-4B-Instruct,Does Foot Locker's new CEO have previous CEO experience in a similar company to Footlocker?,Yes. She was previous CEO of Ulta Beauty which means she had to manage a large retail company that has brick and mortar + online business. So yes she was a CEO in a similar company to Foot Locker before this.,"{
+  ""answer"": ""NO"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks if the new CEO of Foot Locker has previous CEO experience in a similar company to Footlocker, but there is no information about the new CEO's background in the provided evidence.""
+}",False,NO,False,False,False,False,0.9,0.81,True
+financebench_id_00839,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Does Foot Locker's new CEO have previous CEO experience in a similar company to Footlocker?,Yes. She was previous CEO of Ulta Beauty which means she had to manage a large retail company that has brick and mortar + online business. So yes she was a CEO in a similar company to Foot Locker before this.,"{
+  ""answer"": ""NO"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Mary N. Dillon, 61, former Executive Chair and Chief Executive Officer of Ulta Beauty, Inc."",
+  ""short_rationale"": ""The new CEO, Mary N. Dillon, has previous CEO experience in a different company, Ulta Beauty, Inc., not Footlocker.""
+}",False,NO,False,False,False,False,0.9,0.81,True
+financebench_id_01935,question_only,nvidia/Nemotron-Mini-4B-Instruct,What was the key agenda of the AMCOR's 8k filing dated 1st July 2022?,"Amcor Finance (USA), Inc. and Amcor Flexibles North America, Inc., entered into supplemental indentures relating to Guaranteed Senior Notes due 2026 and 2028. This involved the substitution of the Substitute Issuer (Amcor Flexibles North America) for the Former Issuer (Amcor Finance) and the assumption of covenants under the indentures. (In essence a novation agreement)","{
+  ""answer"": ""The key agenda of the AMCOR's 8k filing dated 1st July 2022 was to provide updates on the company's financial performance, strategic initiatives, and recent developments."",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""The filing includes a detailed financial report, management's discussion and analysis, and a section on recent developments. The report highlights the company's performance in various segments, including its key business areas, and mentions its strategic initiatives and growth plans."",
+  ""short_rationale"": ""The 8k filing provides comprehensive information on AMCOR's financial performance, strategic initiatives, and recent developments, making it the key agenda.""
+}",True,"The key agenda of the AMCOR's 8k filing dated 1st July 2022 was to provide updates on the company's financial performance, strategic initiatives, and recent developments.",True,True,True,False,0.9,0.009999999999999995,False
+financebench_id_01935,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What was the key agenda of the AMCOR's 8k filing dated 1st July 2022?,"Amcor Finance (USA), Inc. and Amcor Flexibles North America, Inc., entered into supplemental indentures relating to Guaranteed Senior Notes due 2026 and 2028. This involved the substitution of the Substitute Issuer (Amcor Flexibles North America) for the Former Issuer (Amcor Finance) and the assumption of covenants under the indentures. (In essence a novation agreement)","{
+  ""answer"": ""The key agenda of the AMCOR's 8k filing dated 1st July 2022 was the substitution of the Substitute Issuer for the Former Issuer and the assumption by the Substitute Issuer of the covenants of the Former Issuer under the Indentures."",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""The Indenture, dated as of April 28, 2016, among the Former Issuer, the guarantors party thereto and Deutsche Bank Trust Company Americas, as trustee, governing the Former Issuers (a) 3.625% Guaranteed Senior Notes due 2026 (the 2026 Notes) and (b) 4.500% Guaranteed Senior Notes due 2028 (the 2028 Notes and, together with the 2026 Notes, the Existing Notes), was amended and supplemented to date."",
+  ""short_rationale"": ""The filing related to the substitution of the Substitute Issuer for the Former Issuer and the assumption by the Substitute Issuer of the covenants of the Former Issuer under the Indentures.""",True,The key agenda of the AMCOR's 8k filing dated 1st July 2022 was the substitution of the Substitute Issuer for the Former Issuer and the assumption by the Substitute Issuer of the covenants of the Former Issuer under the Indentures.,True,True,True,False,,,False
+financebench_id_00603,question_only,nvidia/Nemotron-Mini-4B-Instruct,What drove the increase in Ulta Beauty's merchandise inventories balance at end of FY2023?,"Increase in Merchandise inventories balance was driven by the opening of 47 new stores. The answer here assumes FY2023 refers to the 12 months ended on January 28, 2023 (although the company refers to this period as its fiscal 2022.","{
+  ""answer"": ""The increase in Ulta Beauty's merchandise inventories balance at end of FY2023 could be attributed to strong sales and promotions during the fiscal year."",
+  ""confidence"": 0.8,
+  ""evidence_support"": ""The evidence provided does not directly address the reason for the increase in merchandise inventories. However, strong sales and promotions are common factors that can lead to higher inventory balances."",
+  ""short_rationale"": ""The evidence does not provide a specific reason for the increase, but strong sales and promotions are plausible explanations.""
+}",True,The increase in Ulta Beauty's merchandise inventories balance at end of FY2023 could be attributed to strong sales and promotions during the fiscal year.,True,True,True,False,0.8,0.03999999999999998,False
+financebench_id_00603,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What drove the increase in Ulta Beauty's merchandise inventories balance at end of FY2023?,"Increase in Merchandise inventories balance was driven by the opening of 47 new stores. The answer here assumes FY2023 refers to the 12 months ended on January 28, 2023 (although the company refers to this period as its fiscal 2022.","{
+  ""answer"": ""brand expansions"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Merchandise inventories, net at the end of the fourth quarter of fiscal 2022 totaled $1.6 billion compared to $1.5 billion at the end of the fourth quarter of fiscal 2021. The $104.2 million increase was primarily due to the opening of 47 new stores since January 29, 2022, inventory to support new brand launches and brand expansions, and inventory cost increases."",
+  ""short_rationale"": ""The increase in merchandise inventories balance at end of FY2023 was primarily due to brand expansions.""
+}",False,brand expansions,True,False,False,False,0.9,0.81,True
+financebench_id_04209,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Using only the information within the balance sheet, how much total assets did Costco have at the end of FY2021? Answer in USD millions.",$59268.00,"{
+  ""answer"": 100000,
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Costco Wholesale Corporation (Costco) filed its 2021 Annual Report on Form 10-K with the Securities and Exchange Commission (SEC) on February 2, 2022. The balance sheet as of the end of FY2021 is available in the report, specifically in Section 10, 'Financial Condition.'"",
+  ""short_rationale"": ""The balance sheet in the 2021 Annual Report on Form 10-K provides the total assets of Costco at the end of FY2021.""
+}",False,100000,False,False,False,False,0.9,0.81,True
+financebench_id_04209,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Using only the information within the balance sheet, how much total assets did Costco have at the end of FY2021? Answer in USD millions.",$59268.00,"{
+  ""answer"": 29505,
+  ""confidence"": 1,
+  ""evidence_support"": ""Table of Contents"",
+  ""short_rationale"": ""Total current assets in the balance sheet.""
+}",False,29505,False,False,False,False,1.0,1.0,True
+financebench_id_05718,question_only,nvidia/Nemotron-Mini-4B-Instruct,How much (in USD billions) did American Water Works pay out in cash dividends for FY2020? Compute or extract the answer by primarily using the details outlined in the statement of cash flows.,$0.40,"{
+  ""answer"": 0,
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for the amount of cash dividends paid out by American Water Works in FY2020, but there is no financial statement provided in the context.""
+}",False,0,False,False,False,False,0.0,0.0,False
+financebench_id_05718,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,How much (in USD billions) did American Water Works pay out in cash dividends for FY2020? Compute or extract the answer by primarily using the details outlined in the statement of cash flows.,$0.40,{,False,{,False,False,False,False,,,False
+financebench_id_00563,question_only,nvidia/Nemotron-Mini-4B-Instruct,"From FY21 to FY22, excluding Embedded, in which AMD reporting segment did sales proportionally increase the most?",Data Center,"{
+  ""answer"": ""Graphics and Vision Solutions"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Embedded revenue is not included in the comparison as it is a separate reporting segment. The comparison is made between the 'Graphics and Vision Solutions' and 'Processors' segments for the 'AMD' reporting entity. The 'AMD' entity's FY21 and FY22 financial statements are available in the provided evidence."",
+  ""short_rationale"": ""The comparison is made between the 'Graphics and Vision Solutions' and 'Processors' segments for the 'AMD' reporting entity. The 'AMD' entity's FY21 and FY22 financial statements are available in the provided evidence.""
+}",False,Graphics and Vision Solutions,False,False,False,False,0.9,0.81,True
+financebench_id_00563,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"From FY21 to FY22, excluding Embedded, in which AMD reporting segment did sales proportionally increase the most?",Data Center,"{
+  ""answer"": ""Client"",
+  ""confidence"": 1,
+  ""evidence_support"": ""Embedded"",
+  ""short_rationale"": ""Sales proportionally increased the most in the Client reporting segment, excluding Embedded, as the increase in net revenue was the highest among the four segments.""
+}",False,Client,False,False,False,False,1.0,1.0,True
+financebench_id_00807,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Does 3M have a reasonably healthy liquidity profile based on its quick ratio for Q2 of FY2023? If the quick ratio is not relevant to measure liquidity, please state that and explain why.","No. The quick ratio for 3M was 0.96 by Jun'23 close, which needs a bit of an improvement to touch the 1x mark","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question requires evidence from 3M's quick ratio for Q2 of FY2023. Without this information, it is not possible to determine if 3M has a reasonably healthy liquidity profile based on its quick ratio.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.9,0.81,True
+financebench_id_00807,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Does 3M have a reasonably healthy liquidity profile based on its quick ratio for Q2 of FY2023? If the quick ratio is not relevant to measure liquidity, please state that and explain why.","No. The quick ratio for 3M was 0.96 by Jun'23 close, which needs a bit of an improvement to touch the 1x mark","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""The provided financial statement does not provide information about 3M's quick ratio for Q2 of FY2023."",
+  ""short_rationale"": ""The evidence does not contain the necessary information to determine if 3M has a reasonably healthy liquidity profile based on its quick ratio for Q2 of FY2023.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.9,0.81,True
+financebench_id_10420,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Based on the information provided primarily in the statement of financial position and the statement of income, what is AES's FY2022 return on assets (ROA)? ROA is defined as: FY2022 net income / (average total assets between FY2021 and FY2022). Round your answer to two decimal places.",-0.02,"{
+  ""answer"": 0.05,
+  ""confidence"": 0.9,
+  ""evidence_support"": ""INSUFFICIENT_EVIDENCE"",
+  ""short_rationale"": ""No evidence is provided to calculate AES's FY2022 return on assets (ROA).""
+}",False,0.05,False,False,False,False,0.9,0.81,True
+financebench_id_10420,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Based on the information provided primarily in the statement of financial position and the statement of income, what is AES's FY2022 return on assets (ROA)? ROA is defined as: FY2022 net income / (average total assets between FY2021 and FY2022). Round your answer to two decimal places.",-0.02,{,False,{,False,False,False,False,,,False
+financebench_id_03718,question_only,nvidia/Nemotron-Mini-4B-Instruct,What is Lockheed Martin's 2 year total revenue CAGR from FY2020 to FY2022 (in units of percents and round to one decimal place)? Provide a response to the question by primarily using the statement of income.,0.4%,"{
+  ""answer"": 10.0,
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Statement of Income"",
+  ""short_rationale"": ""Calculated from FY2020 to FY2022's revenue figures in the Statement of Income.""
+}",False,10.0,False,False,False,False,0.9,0.81,True
+financebench_id_03718,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What is Lockheed Martin's 2 year total revenue CAGR from FY2020 to FY2022 (in units of percents and round to one decimal place)? Provide a response to the question by primarily using the statement of income.,0.4%,"{
+  ""answer"": ""10.5"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Table of Contents"",
+  ""short_rationale"": ""The CAGR",False,10.5,False,False,False,False,,,False
+financebench_id_04481,question_only,nvidia/Nemotron-Mini-4B-Instruct,What is the FY2022 unadjusted EBITDA % margin for PepsiCo? Calculate unadjusted EBITDA using unadjusted operating income and D&A (from cash flow statement). Give a response to the question by relying on the details shown in the statement of cash flows and the P&L statement.,16.5%,"{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question requires the FY2022 unadjusted EBITDA % margin for PepsiCo, which cannot be answered without the necessary financial data.""
+}",False,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+financebench_id_04481,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What is the FY2022 unadjusted EBITDA % margin for PepsiCo? Calculate unadjusted EBITDA using unadjusted operating income and D&A (from cash flow statement). Give a response to the question by relying on the details shown in the statement of cash flows and the P&L statement.,16.5%,{,False,{,False,False,False,False,,,False
+financebench_id_00790,question_only,nvidia/Nemotron-Mini-4B-Instruct,Is CVS Health a capital-intensive business based on FY2022 data?,"Yes, CVS Health requires an extensive asset base to operate, which is evident from its ROA of only 1.82% in 2022 and 3.39% in 2021, though it should be noted that a significant portion of this asset base is goodwill, and CVS's fixed assets/total assets ratio is on the lower side of 5.6%.","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question requires data from FY2022, but no data is provided.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+financebench_id_00790,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Is CVS Health a capital-intensive business based on FY2022 data?,"Yes, CVS Health requires an extensive asset base to operate, which is evident from its ROA of only 1.82% in 2022 and 3.39% in 2021, though it should be noted that a significant portion of this asset base is goodwill, and CVS's fixed assets/total assets ratio is on the lower side of 5.6%.",{,False,{,False,False,False,False,,,False
+financebench_id_02416,question_only,nvidia/Nemotron-Mini-4B-Instruct,What are three main companies acquired by Pfizer mentioned in this 10K report?,"Trillium, Array, and Therachon","{
+  ""answer"": ""Merck, Pharmacia, Wyeth"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""Pfizer Inc. (Pfizer) is a global biopharmaceutical company that discovers, develops, manufactures, and markets therapeutic products for human and animal health. The company operates through three segments: Pfizer Innovative Health, Pfizer Consumer Healthcare, and Pfizer Animal Health. In the 10-K report, Pfizer mentions the acquisition of three main companies: Merck, Pharmacia, and Wyeth. These acquisitions have contributed to Pfizer's growth and diversification of its product portfolio."",
+  ""short_rationale"": ""Pfizer acquired Merck, Pharmacia, and Wyeth, which have expanded its product portfolio and contributed to its growth.""
+}",False,"Merck, Pharmacia, Wyeth",False,False,False,False,1.0,1.0,True
+financebench_id_02416,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What are three main companies acquired by Pfizer mentioned in this 10K report?,"Trillium, Array, and Therachon","{
+  ""answer"": ""Array, Therachon, Trillium"",
+  ""confidence"": 1.0,
+  ""evidence_support"": ""Pfizer_2021_10K"",
+  ""short_rationale"": ""The 10K report lists the three main companies acquired by Pfizer: Array, Therachon, and Trillium.""
+}",False,"Array, Therachon, Trillium",False,False,False,False,1.0,1.0,True
+financebench_id_04080,question_only,nvidia/Nemotron-Mini-4B-Instruct,"When primarily referencing the income statement and the statement of financial position, what is the FY2021 inventory turnover ratio for Nike? Inventory turnover ratio is defined as: (FY2021 COGS) / (average inventory between FY2020 and FY2021). Round your answer to two decimal places.",3.46,"{
+  ""answer"": 10.5,
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Nike's FY2021 income statement and statement of financial position are not provided."",
+  ""short_rationale"": ""The inventory turnover ratio requires COGS and average inventory data, which are not provided.""
+}",False,10.5,False,False,False,False,0.9,0.81,True
+financebench_id_04080,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"When primarily referencing the income statement and the statement of financial position, what is the FY2021 inventory turnover ratio for Nike? Inventory turnover ratio is defined as: (FY2021 COGS) / (average inventory between FY2020 and FY2021). Round your answer to two decimal places.",3.46,{,False,{,False,False,False,False,,,False
+financebench_id_02119,question_only,nvidia/Nemotron-Mini-4B-Instruct,"If JPM went bankrupted by the end by 2021 Q1 and liquidated all of its assets to pay its shareholders, how much could each shareholder get?",They could receive $66.56 per share.,"{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question does not provide any information about the financial situation of JPMorgan Chase (JPM) or the potential impact of bankruptcy on its shareholders. Therefore, it is impossible to determine how much each shareholder could get.""
+}",False,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+financebench_id_02119,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"If JPM went bankrupted by the end by 2021 Q1 and liquidated all of its assets to pay its shareholders, how much could each shareholder get?",They could receive $66.56 per share.,"{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""The evidence provided does not contain information about the financial status or bankruptcy of JPMorgan in 2021 Q1 or the potential payout to shareholders."",
+  ""short_rationale"": ""The evidence does not provide sufficient information to answer the question.""
+}",False,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+financebench_id_04417,question_only,nvidia/Nemotron-Mini-4B-Instruct,What is the year end FY2019 total amount of inventories for Best Buy? Answer in USD millions. Base your judgments on the information provided primarily in the balance sheet.,$5409.00,"{
+  ""answer"": 0,
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks for the total amount of inventories for Best Buy at the end of FY2019, but there is no financial statement provided in the evidence.""
+}",False,0,False,False,False,False,0.0,0.0,False
+financebench_id_04417,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What is the year end FY2019 total amount of inventories for Best Buy? Answer in USD millions. Base your judgments on the information provided primarily in the balance sheet.,$5409.00,"{
+  ""answer"": 5409,
+  ""confidence"": 1,
+  ""evidence_support"": ""Table of Contents"",
+  ""short_rationale"": ""Inventory value is provided in the table.""
+}",True,5409,True,True,True,False,1.0,0.0,False
+financebench_id_00494,question_only,nvidia/Nemotron-Mini-4B-Instruct,What production rate changes is Boeing forecasting for FY2023?,"Boeing forecasts an increase in the production rates for the 737, 777X and 787 aircrafts in 2023.","{
+  ""answer"": ""Boeing is not forecasting any specific production rate changes for FY2023."",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""INSUFFICIENT_EVIDENCE"",
+  ""short_rationale"": ""No evidence is provided in the question about Boeing's production rate changes for FY2023.""
+}",True,Boeing is not forecasting any specific production rate changes for FY2023.,True,True,True,False,0.9,0.009999999999999995,False
+financebench_id_00494,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,What production rate changes is Boeing forecasting for FY2023?,"Boeing forecasts an increase in the production rates for the 737, 777X and 787 aircrafts in 2023.","{
+  ""answer"": ""Boeing is forecasting to gradually increase the production rate of the 787 program from 5 to 15 per month in 2023, the 777X program from paused to resumed production, and the 737 program from 31 to 35 per month based on market demand and supply chain capacity."",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""The 787 program is currently producing at low rates and we expect to gradually increase to 5 per month in 2023. Production of the 777X is currently paused and is expected to resume in 2023. The 737 program has experienced operational and supply chain challenges stabilizing production at 31 per month. We plan to gradually increase 737 production rates based on market demand and supply chain capacity."",
+  ""short_rationale"": ""The evidence supports the forecast of gradually increasing production rates on several commercial aircraft programs, including the 787, 777X, and 737.""
+}",True,"Boeing is forecasting to gradually increase the production rate of the 787 program from 5 to 15 per month in 2023, the 777X program from paused to resumed production, and the 737 program from 31 to 35 per month based on market demand and supply chain capacity.",True,True,True,False,0.9,0.009999999999999995,False
+financebench_id_00678,question_only,nvidia/Nemotron-Mini-4B-Instruct,"Does Boeing have an improving gross margin profile as of FY2022? If gross margin is not a useful metric for a company like this, then state that and explain why.","Yes. Boeing has an improving gross margin profile as of FY2022. Gross profit improved from $3,017 million in FY2021 to $3,502 million in FY2022. Gross margin % improved from 4.8% in FY2021 to 5.3% in FY2022.","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks about Boeing's gross margin profile in FY2022, but no evidence is provided. Therefore, the answer cannot be determined.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.9,0.81,True
+financebench_id_00678,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"Does Boeing have an improving gross margin profile as of FY2022? If gross margin is not a useful metric for a company like this, then state that and explain why.","Yes. Boeing has an improving gross margin profile as of FY2022. Gross profit improved from $3,017 million in FY2021 to $3,502 million in FY2022. Gross margin % improved from 4.8% in FY2021 to 5.3% in FY2022.","{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""The provided evidence does not contain sufficient information to determine if Boeing has an improving gross margin profile as of FY2022."",
+  ""short_rationale"": ""The evidence only provides sales and cost data, but not gross margin data.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+financebench_id_00552,question_only,nvidia/Nemotron-Mini-4B-Instruct,Has Microsoft increased its debt on balance sheet between FY2023 and the FY2022 period?,No. Microsoft decreased its debt by $2.5bn in FY 2023 vs FY 2022.,"{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question asks about the change in debt between FY2023 and FY2022, but there is no information provided in the question to support an answer.""
+}",False,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+financebench_id_00552,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,Has Microsoft increased its debt on balance sheet between FY2023 and the FY2022 period?,No. Microsoft decreased its debt by $2.5bn in FY 2023 vs FY 2022.,{,False,{,False,False,False,False,,,False
+financebench_id_01930,question_only,nvidia/Nemotron-Mini-4B-Instruct,"How much was the Real change in Sales for AMCOR in FY 2023 vs FY 2022, if we exclude the impact of FX movement, passthrough costs and one-off items?",The Real Growth was flat in FY 2023 vs FY 2022.,"{
+  ""answer"": ""INSUFFICIENT_EVIDENCE"",
+  ""confidence"": 0,
+  ""evidence_support"": ""No evidence is provided."",
+  ""short_rationale"": ""The question requires specific financial data, but it is not provided in the context.""
+}",False,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+financebench_id_01930,with_gold_evidence,nvidia/Nemotron-Mini-4B-Instruct,"How much was the Real change in Sales for AMCOR in FY 2023 vs FY 2022, if we exclude the impact of FX movement, passthrough costs and one-off items?",The Real Growth was flat in FY 2023 vs FY 2022.,"{
+  ""answer"": ""14,694 - 14,544"",
+  ""confidence"": 0.9,
+  ""evidence_support"": ""Net sales fiscal year 2023"",
+  ""short_rationale"": ""The question asks for the Real change in Sales for AMCOR in FY 2023 vs FY 2022, excluding the impact of FX movement, passthrough costs, and one-off items. The evidence provides the Net sales for FY 2023 and FY 2022, which can be used to calculate the Real change in Sales.""
+}",False,"14,694 - 14,544",True,False,False,False,0.9,0.81,True

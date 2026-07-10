@@ -1,0 +1,3 @@
+condition,weak_match_raw,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong,ece,n
+question_only,0.4,0.2,0.2,0.2,0.69,0.3575,0.0,0.53,5
+with_gold_evidence,0.2,0.2,0.2,0.0,0.942,0.7074,0.8,0.742,5

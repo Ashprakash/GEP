@@ -1,0 +1,16 @@
+condition,id,expected_behavior,target_answer,probe_success,parsed_answer,weak_match_raw,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong
+gold_evidence,walmart_ebitda_margin,answer,6.1%,False,approximately 15%,False,False,False,False,0.94,0.8835999999999999,True
+evidence_compressed,walmart_ebitda_margin,answer,6.1%,True,6.1%,True,True,True,False,0.98,0.0004000000000000007,False
+missing_evidence,walmart_ebitda_margin,abstain,INSUFFICIENT_EVIDENCE,True,INSUFFICIENT_EVIDENCE,True,True,False,True,0.99,0.00010000000000000018,False
+direct_grounded_evidence,walmart_ebitda_margin,answer,6.1%,True,6.1%,True,True,True,False,0.98,0.0004000000000000007,False
+counterfactual_direct_evidence,walmart_ebitda_margin,answer,8.4%,True,8.4%,True,True,True,False,0.98,0.0004000000000000007,False
+gold_evidence,acme_retention_ratio,answer,0.79,False,approximately 15%,False,False,False,False,0.94,0.8835999999999999,True
+evidence_compressed,acme_retention_ratio,answer,0.79,True,0.79,True,True,True,False,0.98,0.0004000000000000007,False
+missing_evidence,acme_retention_ratio,abstain,INSUFFICIENT_EVIDENCE,False,roughly 0.5,False,False,False,False,0.99,0.9801,True
+direct_grounded_evidence,acme_retention_ratio,answer,0.79,True,0.79,True,True,True,False,0.98,0.0004000000000000007,False
+counterfactual_direct_evidence,acme_retention_ratio,answer,1.08,True,1.08,True,True,True,False,0.98,0.0004000000000000007,False
+gold_evidence,amex_operating_margin,answer,"No, American Express's operating margin was approximately 18% in FY2022, below 20%.",False,approximately 15%,False,False,False,False,0.94,0.8835999999999999,True
+evidence_compressed,amex_operating_margin,answer,"No, American Express's operating margin was approximately 18% in FY2022, below 20%.",True,"No, American Express's operating margin was approximately 18% in FY2022, below 20%.",True,True,True,False,0.98,0.0004000000000000007,False
+missing_evidence,amex_operating_margin,abstain,INSUFFICIENT_EVIDENCE,True,INSUFFICIENT_EVIDENCE,True,True,False,True,0.99,0.00010000000000000018,False
+direct_grounded_evidence,amex_operating_margin,answer,"No, American Express's operating margin was approximately 18% in FY2022, below 20%.",True,"No, American Express's operating margin was approximately 18% in FY2022, below 20%.",True,True,True,False,0.98,0.0004000000000000007,False
+counterfactual_direct_evidence,amex_operating_margin,answer,24.7%,True,24.7%,True,True,True,False,0.98,0.0004000000000000007,False

@@ -1,0 +1,6 @@
+condition,probe_success,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong,ece,n
+counterfactual_direct_evidence,1.0,1.0,1.0,0.0,0.98,0.0004,0.0,0.02,3
+direct_grounded_evidence,1.0,1.0,1.0,0.0,0.98,0.0004,0.0,0.02,3
+evidence_compressed,1.0,1.0,1.0,0.0,0.98,0.0004,0.0,0.02,3
+gold_evidence,0.0,0.0,0.0,0.0,0.94,0.8836,1.0,0.94,3
+missing_evidence,0.6667,0.6667,0.0,0.6667,0.99,0.3268,0.3333,0.3233,3

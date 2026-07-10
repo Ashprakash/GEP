@@ -1,0 +1,2 @@
+model,family,n,coverage,acc_full,acc_commit,scorer,baseline
+Qwen2.5-0.5B-Instruct,Qwen2.5,3,0.333,0.0,0.0,units-tolerant,

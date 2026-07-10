@@ -1,0 +1,2 @@
+model,acc@30,acc@50,acc@70,acc@100,aurc,n
+cascade+selective (mock),1.0,0.8,0.643,0.45,0.225,20

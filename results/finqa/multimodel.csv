@@ -1,0 +1,4 @@
+model,family,n,coverage,acc_full,acc_commit,scorer,baseline
+Nemotron-Mini-4B-Instruct,Nemotron,20,0.7,0.15,0.214,units-tolerant,
+Qwen2.5-7B-Instruct,Qwen2.5,20,0.95,0.35,0.368,units-tolerant,
+deepseek-llm-7b-chat,deepseek,20,0.55,0.1,0.182,units-tolerant,

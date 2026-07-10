@@ -1,0 +1,2 @@
+extractor_id,acc@20,acc@30,acc@50,acc@70,acc@100,aurc,full_accuracy,n_answerable
+Qwen/Qwen2.5-7B-Instruct,0.8333333333333334,0.5555555555555556,0.4,0.2857142857142857,0.2,0.5125237378370858,0.2,30

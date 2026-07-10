@@ -1,0 +1,435 @@
+extractor_id,condition,task_type,financebench_id,question,gold_answer,formula,n_vars,computed,executed,match_units,fail_reason,extractor_raw,support_probability,verbalized_confidence,logprob_confidence,parsed_answer,weak_match_raw,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong
+deepseek-ai/deepseek-llm-7b-chat,tool_program,period_comparison,f676f351-90da-440c-8608-959fa528250c,Approximately how many more people live in Tunis compared to Sfax?,450000,,2,,False,False,no_formula_multivar,"{
+""variables"": {
+""tunis_population"": 700000,
+""sfax_population"": 250000
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,524e59f1-3697-4537-bbe8-371eea8468b5,How many days after Henry and Charles agreed to sign a treaty to invade France was the invasion of France to happen?,171,henry_and_charles_signed_treaty - invasion_planned_date - henry_began_preparations,0,,False,False,formula_did_not_execute,"{
+""variables"": {
+""henry_and_charles_signed_treaty"": ""31 December 1543"",
+""invasion_planned_date"": ""20 June 1544"",
+""henry_began_preparations"": ""15 May 1544"",
+""gonzaga_invaded"": ""8 July 1544""
+},
+""formula"": ""henry_and_charles_signed_treaty - invasion_planned_date - henry_began_preparations"",
+""unit"": ""days""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,be626d26-304c-4522-afdd-3cffc3bc0819,How many points did Jacksonville win by?,41,len(interceptions) - len(touchdowns) - len(yards),0,,False,False,formula_did_not_execute,"{
+""variables"": {
+""interceptions"": [""Chad Pennington"", ""Deon Grant""],
+""touchdowns"": [""Fred Taylor"", ""Maurice Jones-Drew"", ""Reggie Williams"", ""George Wrighster""],
+""yards"": [""32"", ""6"", ""13"", ""1"", ""4"", ""16"", ""4""]
+},
+""formula"": ""len(interceptions) - len(touchdowns) - len(yards)"",
+""unit"": ""points""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,2dc7d258-2e14-478d-ad08-72cee442f8d9,How many percent of people in 2000 were not Asian?,98.55,100 - (asian_american + native_americans_united_states + pacific_islanders + other_races + two_or_more_races + hispanic),8,-23864.0%,True,False,,"{
+""variables"": {
+""white_american"": 89312,
+""black_or_african_american"": 912,
+""native_americans_united_states"": 1052,
+""asian_american"": 1160,
+""pacific_islanders"": 1200,
+""other_races"": 4160,
+""two_or_more_races"": 1584,
+""hispanic"": 14808
+},
+""formula"": ""100 - (asian_american + native_americans_united_states + pacific_islanders + other_races + two_or_more_races + hispanic)"",
+""unit"": ""percent""
+}",0.0,0.0,0.8052111268043518,-23864.0%,False,False,False,False,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,621c1c15-0c26-4e1d-b977-2f1fa7f572bf,How many points were scored in the second half of the game?,10,second_half_score - first_half_score,2,-31,True,False,,"{
+""variables"": {
+""first_half_score"": 41,
+""second_half_score"": 10
+},
+""formula"": ""second_half_score - first_half_score"",
+""unit"": ""points""
+}",1.0,0.8,0.8746002912521362,-31,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,4ce7e457-4efb-4352-bc1b-f4b49013d168,How many percent did not have individuals under 18?,70.5,,8,,False,False,no_formula_multivar,"{
+""variables"": {
+""total_households"": 88296,
+""households_with_children"": 29.5,
+""households_with_married_couples"": 53.3,
+""households_with_female_householder_no_husband"": 9.1,
+""households_non_families"": 33.4,
+""households_individuals"": 26.1,
+""households_individuals_under_18"": 31.5,
+""households_senior_alone"": 9.5
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,fd37e49d-1f0a-419b-ade5-71230f2a339d,How many in percent from the census weren't swedish?,65,100 - (3.72 * (swedish_population / total_population)),2,99.3%,True,False,,"{
+""variables"": {
+""total_population"": 7791,
+""swedish_population"": 1390
+},
+""formula"": ""100 - (3.72 * (swedish_population / total_population))"",
+""unit"": ""percent""
+}",0.5,0.9,0.7337647676467896,99.3%,False,False,False,False,0.5,0.25,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,66203c83-f388-432f-a493-239102722e77,How many of the four campaigns against the Livonians carried out by Novgorod resulted in success?,0,length(campaigns) - length(success),0,,False,False,formula_did_not_execute,"{
+""variables"": {
+""campaigns"": [""1217"", ""1219"", ""1222"", ""1223""],
+""success"": [""1224""]
+},
+""formula"": ""length(campaigns) - length(success)"",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,2071537e-4b83-4456-8205-0ba4050f325c,How many days did it take the Mongol armey to travel from Male to Myinsaing?,10,None,10,,False,False,formula_did_not_execute,"{
+""variables"": {
+""kyawswa_submission_january"": 1297,
+""kyawswa_recognition_march"": 20,
+""kyawswa_overthrow_december"": 1297,
+""myinsaing_foundation_january"": 1300,
+""ng_singu_and_male_seizure_january"": 22,
+""male_capture_january"": 1301,
+""myinsaing_capture_january"": 25,
+""retreat_execution_april"": 6,
+""withdrawal_april"": 4,
+""upper_burma_retaken_april"": 303
+},
+""formula"": ""None"",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,0b0de2b6-099d-463f-9eb4-0b5acd505b38,How many percent of people were not between ages of 5 and 9?,93.7,,13,,False,False,no_formula_multivar,"{
+""variables"": {
+""age_5_to_9"": 6.3,
+""age_10_to_14"": 6.7,
+""age_15_to_19"": 6.5,
+""age_20_to_24"": 5.5,
+""age_25_to_29"": 5.8,
+""age_30_to_34"": 6.6,
+""age_35_to_39"": 7.9,
+""age_40_to_44"": 8.5,
+""age_45_to_49"": 8.0,
+""age_50_to_54"": 7.0,
+""age_55_to_59"": 6.4,
+""age_60_to_64"": 13.7,
+""age_65_and_over"": 13.7
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,period_comparison,89231d6d-51f7-44bc-a314-f01695ab3bf8,How many more Japanese are there compared to Chinese nationals in Bangkok?,25677,((bangkok_population - bangkok_domicile_population + bangkok_metropolitan_region_population) - japanese_in_bangkok - chinese_in_bangkok - asian_expatriates_in_bangkok) / (bangkok_population - bangkok_domicile_population + bangkok_metropolitan_region_population) * 100,6,98.5%,True,False,,"{
+""variables"": {
+""bangkok_population"": 8280925,
+""bangkok_domicile_population"": 5692284,
+""bangkok_metropolitan_region_population"": 14565547,
+""japanese_in_bangkok"": 81570,
+""chinese_in_bangkok"": 55893,
+""asian_expatriates_in_bangkok"": 117071
+},
+""formula"": ""((bangkok_population - bangkok_domicile_population + bangkok_metropolitan_region_population) - japanese_in_bangkok - chinese_in_bangkok - asian_expatriates_in_bangkok) / (bangkok_population - bangkok_domicile_population + bangkok_metropolitan_region_population) * 100"",
+""unit"": ""percent""
+}",1.0,0.6,0.88211989402771,98.5%,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,guidance_delta,3059f5b3-e3a8-4fd5-8a2f-d0c3071f5c16,How many francs was old age pensions per month before it was raised by 300 francs for a single person?,1400,,0,,False,False,no_program_parsed,"{
+""variables"": {},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,dbf61567-8597-4d2c-a79a-64066c33f5af,How many days did it take the Ente to approve the Foch Line?,8,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""first_demarcation_line"": ""Conference of Ambassadors"",
+""second_demarcation_line"": ""Foch Line"",
+""polish_offensive_start"": ""June 18"",
+""polish_offensive_end"": ""August 3"",
+""french_army_commander"": ""Ferdinand Foch""
+},
+""formula"": ""none"",
+""unit"": ""none""",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,09942ac2-8d68-4baf-9458-ab6b04f76958,how many yards did Battle run?,3,,1,3,True,True,,"{
+""variables"": {
+""battle_yards"": 3
+},
+""formula"": """",
+""unit"": ""yards""
+}",1.0,0.8,0.7831444144248962,3,True,True,True,False,1.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,06ab630d-c2dd-4f2a-b23f-e0e4436025f3,How many more people than households are reported according to the census?,9899,,2,,False,False,no_formula_multivar,"{
+""variables"": {
+""people"": 15633,
+""households"": 5734
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,973b6689-bf6a-4140-a8e5-22c5796ecd73,How many touchdowns were scored during the first quarter?,3,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""quarter_1_touchdowns"": """",
+""quarter_2_touchdowns"": """",
+""quarter_3_touchdowns"": """",
+""quarter_4_touchdowns"": """"
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,831d5830-7bf3-4cdf-bc89-f7a39060f598,How many in percent from the census weren't White?,23.79,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""white_population"": 76.21,
+""non_white_population"": 100 - 76.21
+},
+""formula"": ""non_white_population / white_population * 100"",
+""unit"": ""percent""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,7fbcd385-a95f-4998-a63a-8b44c9369f59,How many wins did the Eagles have after losing to the Ravens?,5,eagles_wins - total_games,2,-9,True,False,,"{
+""variables"": {
+""eagles_wins"": 5,
+""total_games"": 14
+},
+""formula"": ""eagles_wins - total_games"",
+""unit"": ""losses""
+}",1.0,0.8,0.8354831337928772,-9,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,55fc402d-7b13-4863-b065-51be765f642d,How many in percent weren't 18 to 24?,93.6,,5,,False,False,no_formula_multivar,"{
+""variables"": {""under_18"": 24.60, ""18_to_24"": 6.40, ""25_to_44"": 22.80, ""45_to_64"": 25.40, ""65_and_older"": 20.80},
+""formula"": """",
+""unit"": ""percent""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,bf0c5770-1e03-4a94-a336-742f6e6716cf,How many months after Marghiloman renounced the treaty did Romania re-enter the war?,1,if month(marghiloman_renouncing) = month(treaty_signed) + 2 then 2 else 0,1,,False,False,formula_did_not_execute,"{
+""variables"": {
+""marghiloman_renouncing"": """",
+""bessarabia_attached"": ""27 March 1918"",
+""treaty_signed"": ""5-9 March 1918"",
+""treaty_renounced"": ""October 1918"",
+""treaty_nullified"": ""10 November 1918"",
+""total_romanian_deaths"": 748000
+},
+""formula"": ""if month(marghiloman_renouncing) = month(treaty_signed) + 2 then 2 else 0"",
+""unit"": ""months""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,435366d2-3547-4adc-9419-d268336e47a1,"How many people are in Chişinău, Bălţi, and Ungheni combined?",779489,,3,,False,False,no_formula_multivar,"{
+""variables"": {
+""chișinău_population"": 644204,
+""bălți_population"": 102457,
+""ungheni_population"": 32828
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,915ccfea-addf-4114-9d0d-996c515d0d32,How many interceptions were thrown by Kaepernick?,3,,1,2,True,False,,"{
+""variables"": {
+""interceptions"": 2
+},
+""formula"": """",
+""unit"": ""none""
+}",1.0,0.8,0.8205360770225525,2,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,adbab37e-cb14-49fc-909b-cce4aa904d88,How many years did it take for the Ming to first conquer the Yunnan borderlands?,8,,2,,False,False,no_formula_multivar,"{
+""variables"": {
+""ming_conquest"": 8,
+""burmese_conquest"": 1557
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,95c84874-9b5d-46c3-bea9-3f81cd5e63fb,How many percent were not  Irish?,92.2,others,2,92.2%,True,True,,"{
+""variables"": {""irish"": 7.8, ""others"": 92.2},
+""formula"": ""others"",
+""unit"": ""percent""
+}",0.5,0.8,0.7767850756645203,92.2%,True,True,True,False,0.5,0.25,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,9f8cd721-ae32-4d42-99f0-6044fc8b7c25,How many touchdowns were scored in the first half?,1,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""first_touchdown"": """",
+""second_touchdown"": ""Chris McAlister""
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,52e368aa-4c2a-426b-a0c2-e2f16ac16de3,How many denominations existed for centavos in 1942?,4,,1,7,True,False,,"{
+""variables"": {
+""denominations"": 7
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,0.8,0.7038685083389282,7,False,False,False,False,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,7bc7602b-3f64-4181-b465-0dbcba1e8d82,How many more Russian and Left-Bank Cossacks were killed than wounded?,200,,3,,False,False,no_formula_multivar,"{
+""variables"": {
+""cossacks_killed"": 4200,
+""cossacks_wounded"": 4000,
+""cossacks_captives"": 20500
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,eb024d5a-3c15-4433-9fb9-6dc25e73ab36,How many months after a truce of the War of Independence was called did negotiations of the Anglo-Irish Treaty begin?,3,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""truce_called"": ""July 1921"",
+""treaty_began"": ""11 October 1921""
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,1744ddd5-6e55-4f9c-90af-9cb035f12695,How many percentage points did the GDP increase by from 2008 to 2009?,2.9,2008_gdp_growth - 2009_gdp_growth,2,,False,False,formula_did_not_execute,"{
+""variables"": {
+""2008_gdp_growth"": 1,
+""2009_gdp_growth"": 2.9
+},
+""formula"": ""2008_gdp_growth - 2009_gdp_growth"",
+""unit"": ""percentage points""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,f22e69f5-578c-425d-ba5e-105c7b31c2d6,How many years had passed from when the Karnkowski Statues were instated to when the were lifted?,15,,2,,False,False,no_formula_multivar,"{
+""variables"": {
+""karnkowskstatutes"": 1570,
+""lifted"": 1585
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,40fb6526-e62b-4c73-aa24-fcb703433549,How many years after here marriage to Killigrew did Catherine die?,42,Catherine_died - second_marriage_date,3,-7,True,False,,"{
+""variables"": {
+""Catherine_died"": 1583,
+""second_marriage_date"": 1590,
+""Henry_died"": 1608,
+""second_marriage_partner"": ""Jaél de Peigne""
+},
+""formula"": ""Catherine_died - second_marriage_date"",
+""unit"": ""years""
+}",0.667,0.5,0.7984873056411743,-7,False,False,False,False,0.667,0.44488900000000003,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,e22df63c-dbde-4af5-b20d-bb8a47873a47,How many years after Jaél de Peigne married Killigrew was she naturalised?,11,,3,,False,False,no_formula_multivar,"{
+""variables"": {
+""jael_married_killigrew"": ""1590"",
+""jael_naturalised"": ""1601"",
+""jael_died"": ""1632""
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,83c09b29-787f-45b1-a797-1d180da12849,How many in percent weren't 45 to 64?,79.9,100 - (20.1 / 100) * 100,8,79.9%,True,True,,"{
+""variables"": {""under_18"": 21.8, ""18_to_24"": 13.1, ""25_to_44"": 31.7, ""45_to_64"": 20.1, ""65_and_older"": 13.2, ""median_age"": 34, ""females_100"": 100, ""males_100_over_18"": 83.5},
+""formula"": ""100 - (20.1 / 100) * 100"",
+""unit"": ""percent""
+}",1.0,0.8,0.8828198313713074,79.9%,True,True,True,False,1.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,period_comparison,485017d8-a96b-4958-9f97-9c0765ec9390,"How many more, according to a 2008 report, Laz people were there compared to Assyrian people?",55000,,10,,False,False,no_formula_multivar,"{
+""variables"": {
+""turks"": 55000000,
+""kurds"": 9600000,
+""zazas"": 300000,
+""circassians"": 250000,
+"" Bosniaks"": 200000,
+""albanians"": 870000,
+""georgians"": 100000,
+""arabs"": 870000,
+""laz_people"": 80000,
+""assyrians"": 20000
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,00b0b658-4c36-4031-9e48-9df2ecd47ccb,How many percent did not speak German?,98.49,total_population - spanish_speakers - german_speakers,3,48693,True,False,,"{
+""variables"": {
+""total_population"": 49129,
+""spanish_speakers"": 285,
+""german_speakers"": 151
+},
+""formula"": ""total_population - spanish_speakers - german_speakers"",
+""unit"": ""people""
+}",0.333,0.8,0.8641848564147949,48693,False,False,False,False,0.333,0.11088900000000002,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,e751f5e4-5967-4c05-b38f-f3c80102f37d,How many percent of people were not African American?,98.75,total_population - black_or_african_american / total_population * 100,2,137890.7%,True,False,,"{
+""variables"": {
+""total_population"": 137893,
+""black_or_african_american"": 3121
+},
+""formula"": ""total_population - black_or_african_american / total_population * 100"",
+""unit"": ""percent""
+}",0.5,,0.8254213929176331,137890.7%,False,False,False,False,0.5,0.25,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,c60a5f0d-c902-4078-a1f3-fd816612c913,How many more housing units are there than families?,8150,households - families,3,5249,True,False,,"{
+""variables"": {""people"": 49129, ""households"": 18878, ""families"": 13629},
+""formula"": ""households - families"",
+""unit"": """"
+}",1.0,0.8,0.8569595217704773,5249,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,f47e8521-c8ad-42f8-b164-02c35afff6c5,What date were 21 tourists taken hostage by Abu Sayyaf?,2000,,2,,False,False,no_formula_multivar,"{
+""variables"": {
+""hostage_incident"": 21,
+""year"": 2000
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,331ac863-2cfe-4187-b14e-c64c36dc633c,How many passes of Neil ODonnell were incomplete?,170,incomplete_passes - (passes_completed_odonnell - 17),3,11,True,False,,"{
+""variables"": {""passes_completed_odonnell"": 246, ""total_passes"": 416, ""incomplete_passes"": 240},
+""formula"": ""incomplete_passes - (passes_completed_odonnell - 17)"",
+""unit"": ""passes""}",0.667,0.8,0.7003406882286072,11,False,False,False,False,0.667,0.44488900000000003,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,f23bab05-c051-43a5-a25c-1f869599fc7f,How many more people were between 25 to 44 than age 65 or older?,2125,25_to_44 - 65_or_older,5,,False,False,formula_did_not_execute,"{
+""variables"": {
+""under_18"": 5841,
+""18_to_24"": 1875,
+""25_to_44"": 5025,
+""45_to_64"": 7414,
+""65_or_older"": 2903
+},
+""formula"": ""25_to_44 - 65_or_older"",
+""unit"": """"
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,666baedb-2bfe-496a-8ab2-5b5bfc648eb8,How many in percent weren't 45 to 64?,80.7,,5,,False,False,no_formula_multivar,"{
+""variables"": {""under_18"": 0.25, ""18_to_24"": 0.171, ""25_to_44"": 0.257, ""45_to_64"": 0.193, ""65_and_older"": 0.129},
+""formula"": """",
+""unit"": ""percent""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,5ba22fe2-23cc-43f2-8bcd-bf3d8481cb17,How many years did it take to quadruple state- and local-government employment?,59,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""years_to_quadruple"": """"
+},
+""formula"": """",
+""unit"": ""years""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,a6117d57-8f80-40f0-9a02-0bd4778509fa,What were the distances of the td receptions by Rob Gronkowski?,11-yard,length_of_td_reception_by_gronkowski,6,,False,False,formula_did_not_execute,"{
+""variables"": {
+""gostkowski_field_goal"": 39,
+""vinateri_field_goal"": 31,
+""brady_td_pass_to_gronkowski_1"": 11,
+""green_ellis_td"": 1,
+""brady_td_pass_to_gronkowski_2"": 21,
+""brady_td_pass_to_gronkowski_3"": 2
+},
+""formula"": ""length_of_td_reception_by_gronkowski"",
+""unit"": ""yards""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,b1201907-9e63-438c-8409-51898ba7aab7,How many field goals did Nedney kick in the first quarter?,1,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""nedney_field_goals"": """"
+},
+""formula"": """",
+""unit"": ""field_goals""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,b8d7c238-0b3e-45ba-99f9-e8a71c4e8f8d,How many days after a VOC probing party landed in the island was a decisive assault ordered?,4,,1,1577,True,False,,"{
+""variables"": {
+""fleet_arrival"": ""1620-12-31"",
+""probing_party_landing"": ""1623-03-07"",
+""assault_order"": ""1623-03-11""
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,0.5,0.8664124011993408,1577,False,False,False,False,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,508a6f11-0968-4418-aa84-c277f05e7575,How many years did it take for the Kamkowski Tatutes to be lifted?,15,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""years_kamkowski_tatutes"": """"
+},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,8f6813c3-3469-475b-82af-9309feac4410,How many years did Israel use napalm in Pakistan during the Six-Day War?,1965,,0,,False,False,no_program_parsed,"{
+""variables"": {},
+""formula"": """",
+""unit"": ""none""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,c432bf4a-db70-4e00-a093-fe43ca9b7ab6,How many more people are there than households?,32692,people - households,2,32692,True,True,,"{
+""variables"": {
+""people"": 47829,
+""households"": 15137
+},
+""formula"": ""people - households"",
+""unit"": ""none""
+}",1.0,0.8,0.8922423124313354,32692,True,True,True,False,1.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,151f1e91-e49a-4e5d-ab60-97c7adcb53b4,"How many yards, to two decimal places, were Neil ODonnell's passes on average?",12.07,,3,,False,False,no_formula_multivar,"{
+""variables"": {""passes"": 246, ""total_passes"": 416, ""yards"": 2970},
+""formula"": """",
+""unit"": ""yards""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,period_comparison,5fa6b6c4-eac8-4b80-b0a0-bb0fe9862ef0,How many more birds were there in 2008 compared to 1998?,252,population_2008 - population_1998,2,52,True,False,,"{
+""variables"": {
+""population_2008"": 100,
+""population_1998"": 48
+},
+""formula"": ""population_2008 - population_1998"",
+""unit"": ""none""
+}",1.0,0.8,0.8475126624107361,52,False,False,False,False,1.0,1.0,True

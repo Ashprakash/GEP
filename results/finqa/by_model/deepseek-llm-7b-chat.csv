@@ -1,0 +1,173 @@
+extractor_id,condition,task_type,financebench_id,question,gold_answer,formula,n_vars,computed,executed,match_units,fail_reason,extractor_raw,support_probability,verbalized_confidence,logprob_confidence,parsed_answer,weak_match_raw,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,HOLX/2007/page_126.pdf-2,what portion of the estimated purchase price is derived by the net tangible assets?,0.03825,net_tangible_assets / estimated_purchase_price * 100,7,3.82514,True,True,,"{
+""variables"": {""net_tangible_assets"": 2800, ""developed_technology_and_know_how"": 12300, ""customer_relationship"": 17000, ""trade_name"": 2800, ""deferred_income_tax_liabilities_net"": -9500, ""goodwill"": 47800, ""estimated_purchase_price"": 73200},
+""formula"": ""net_tangible_assets / estimated_purchase_price * 100"",
+""unit"": ""%""
+}",1.0,,0.9266980886459351,3.82514,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,ETFC/2011/page_144.pdf-1,as of december 312011 what was the ratio of the loans with a maturity in 2037 to the loans with a maturity in 2033,1.69231,loans_2037 / total_loans * 100,2,100.0%,True,False,,"{
+""variables"": {""loans_2037"": 0.2, ""loans_2033"": 0.2},
+""formula"": ""loans_2037 / total_loans * 100"",
+""unit"": ""percent""
+}",1.0,,0.8613211512565613,100.0%,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,CME/2010/page_123.pdf-5,"what is the total value of the approved equity compensation plans in 2005 , in millions of dollars?",373.15316,approved_equity_plan_value + unapproved_equity_plan_value,2,1.21714e+06,True,False,,"{
+""variables"": {
+""approved_equity_plan_value"": 1217121,
+""unapproved_equity_plan_value"": 22
+},
+""formula"": ""approved_equity_plan_value + unapproved_equity_plan_value"",
+""unit"": ""millions of dollars""
+},
+""variables"": {
+""approved_equity_plan_value"": 5156223,
+""unapproved_equity_plan_value"": 2014
+},
+""formula"": ""approved_equity_plan_value + unapproved_equity_plan_value"",
+""unit"": ""millions of dollars""
+}",1.0,,0.838546872138977,1.21714e+06,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,STT/2006/page_95.pdf-1,what is the percentage change in total assets in unconsolidated conduits from 2005 to 2006?,0.41061,((unconsolidated_conduits_assets_2006 - unconsolidated_conduits_assets_2005) / unconsolidated_conduits_assets_2005) * 100,4,0.0%,True,False,,"{
+""variables"": {""unconsolidated_conduits_assets"": 252470000000, ""cdo_assets"": 3475000000, ""common_stock_purchases"": 28000000, ""treasury_stock_cost"": 63},
+""formula"": ""((unconsolidated_conduits_assets_2006 - unconsolidated_conduits_assets_2005) / unconsolidated_conduits_assets_2005) * 100"",
+""unit"": ""percent""
+}",0.25,,0.8664299845695496,0.0%,False,False,False,False,0.25,0.0625,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,GS/2013/page_72.pdf-2,what is the percentage change in common shareholders 2019 equity due to the adjustments presented in the table to reach basel iii cet1?,-0.18309,2019_common_equity + net_goodwill_intangible_assets + investments_nonconsolidated_financial_institutions - other_adjustments - goodwill + identifiable_intangible_assets - deferred_tax_liabilities,7,,False,False,formula_did_not_execute,"{
+""variables"": {
+""2019_common_equity"": 71267,
+""goodwill"": -3705,
+""identifiable_intangible_assets"": -671,
+""deferred_tax_liabilities"": 908,
+""net_goodwill_intangible_assets"": -3468,
+""investments_nonconsolidated_financial_institutions"": -9091,
+""other_adjustments"": -489
+},
+""formula"": ""2019_common_equity + net_goodwill_intangible_assets + investments_nonconsolidated_financial_institutions - other_adjustments - goodwill + identifiable_intangible_assets - deferred_tax_liabilities"",
+""unit"": ""dollars""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,BLK/2015/page_124.pdf-1,what percent of future commitments are due after 2020?,0.4655,,7,,False,False,no_formula_multivar,"{
+""variables"": {""2016_future_commitments"": 134, ""2017_future_commitments"": 133, ""2018_future_commitments"": 131, ""2019_future_commitments"": 125, ""2020_future_commitments"": 120, ""thereafter_future_commitments"": 560, ""total_future_commitments"": 1203},
+""formula"": """",
+""unit"": ""million""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,FIS/2012/page_48.pdf-3,what was the percentage change in the impact of the euro on earnings from 2011 to 2012?,0.02652,((2012_euro - 2011_euro) / (2011_euro * 100)) - ((2010_euro - 2011_euro) / (2011_euro * 100)),6,,False,False,formula_did_not_execute,"{
+""variables"": {
+""2012_euro"": 27.1,
+""2011_euro"": 26.4,
+""2010_euro"": 18.6,
+""2012_real"": 40.4,
+""2011_real"": 42.4,
+""2010_real"": 32.5
+},
+""formula"": ""((2012_euro - 2011_euro) / (2011_euro * 100)) - ((2010_euro - 2011_euro) / (2011_euro * 100))"",
+""unit"": ""percent""
+}",0.0,,,INSUFFICIENT_EVIDENCE,True,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,GIS/2019/page_68.pdf-2,what was the percent of the change in the net sales from 2017 to 2018,0.01696,((net_sales_2018 - net_sales_2017) / net_sales_2017) * 100,3,1.7%,True,True,,"{
+""variables"": {
+""net_sales_2017"": 16772.9,
+""net_sales_2018"": 17057.4,
+""change_in_net_sales"": 284.5
+},
+""formula"": ""((net_sales_2018 - net_sales_2017) / net_sales_2017) * 100"",
+""unit"": ""percent""
+}",0.667,,0.8838721513748169,1.7%,False,False,False,False,0.667,0.44488900000000003,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,PNC/2015/page_93.pdf-1,"for interest only products , what percent of the total was due in 2020 and thereafter?",0.40879,,2,,False,False,no_formula_multivar,"{
+""variables"": {""interest_only_2020_and_thereafter"": 3321, ""total_home_equity_lines_of_credit"": 8124},
+""formula"": """",
+""unit"": ""percent""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,line_item_lookup,AES/2001/page_33.pdf-4,what was average of high and low stock prices for the first quarter of 2000?,39.485,0.5 * (high_stock_price_2000_first_quarter + low_stock_price_2000_first_quarter) + 0.5 * (high_stock_price_2001_first_quarter + low_stock_price_2001_first_quarter),4,90.21,True,False,,"{
+""variables"": {
+""high_stock_price_2000_first_quarter"": 44.72,
+""low_stock_price_2000_first_quarter"": 34.25,
+""high_stock_price_2001_first_quarter"": 60.15,
+""low_stock_price_2001_first_quarter"": 41.30
+},
+""formula"": ""0.5 * (high_stock_price_2000_first_quarter + low_stock_price_2000_first_quarter) + 0.5 * (high_stock_price_2001_first_quarter + low_stock_price_2001_first_quarter)"",
+""unit"": ""none""
+}",1.0,0.8,0.8904999494552612,90.21,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,line_item_lookup,GS/2015/page_188.pdf-4,"in billions , what was the total for 2015 and 2014 relating to commitments to invest in funds managed by the firm?",5.73,,2,,False,False,no_formula_multivar,"{
+""variables"": {""total_commitments_2015"": 2703, ""total_commitments_2014"": 2751},
+""formula"": """",
+""unit"": ""billion""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,V/2014/page_126.pdf-2,what is the percentage increase in the fair value of option granted from 2013 to 2014?,5.08,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""2014_fair_value"": 44.11,
+""2013_fair_value"": 39.03,
+""2012_fair_value"": 29.65,
+""2014_expected_term"": 4.8,
+""2013_expected_term"": 6.08,
+""2012_expected_term"": 6.02,
+""2014_risk_free_rate"": 0.013,
+""2013_risk_free_rate"": 0.008,
+""2012_risk_free_rate"": 0.012,
+""2014_volatility"": 0.252,
+""2013_volatility"": 0.293,
+""2012_volatility"": 0.349,
+""2014_dividend_yield"": 0.008,
+""2013_dividend_yield"": 0.0",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,ANSS/2012/page_93.pdf-2,what was the percentage change in the royalty fees are reported in cost of goods sold from 2011 to 2012,9.3,((lease_rental_expense + base_rent + noncancellable_lease_payments) - sum(royalty_fees)) / sum(royalty_feeds) * 100,0,,False,False,formula_did_not_execute,"{
+""variables"": {""lease_rental_expense"": [1.3, 1.3, 1.3], ""base_rent"": [4.3, 4.5, 4.7], ""noncancellable_lease_payments"": [9.2, 9.2, 9.2], ""royalty_fees"": [9.3, 8.4, 6.8]},
+""formula"": ""((lease_rental_expense + base_rent + noncancellable_lease_payments) - sum(royalty_fees)) / sum(royalty_feeds) * 100"",
+""unit"": ""percent""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,line_item_lookup,ECL/2017/page_94.pdf-1,what is the difference between the statutory u.s . rate and the effective income tax rate in 2017?,0.213,100 * ((total_revenue - statutory_us_rate * (total_revenue - tax_holidays_dominican_republic + tax_holidays_singapore + one_time_transition_tax) - china_tax_rate * (total_revenue - tax_holidays_dominican_republic - tax_holidays_singapore)) / (total_revenue - statutory_us_rate * tax_holidays_dominican_republic - china_tax_rate * tax_holidays_singapore - one_time_transition_tax)),5,,False,False,formula_did_not_execute,"{
+""variables"": {
+""statutory_us_rate"": 35.0,
+""china_tax_rate"": 15.0,
+""tax_holidays_dominican_republic"": -7.4,
+""tax_holidays_singapore"": -8.1,
+""one_time_transition_tax"": 160.1
+},
+""formula"": ""100 * ((total_revenue - statutory_us_rate * (total_revenue - tax_holidays_dominican_republic + tax_holidays_singapore + one_time_transition_tax) - china_tax_rate * (total_revenue - tax_holidays_dominican_republic - tax_holidays_singapore)) / (total_revenue - statutory_us_rate * tax_holidays_dominican_republic - china_tax_rate * tax_holidays_singapore - one_time_transition_tax))"",
+""unit"": ""percent""
+},
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,UNP/2015/page_56.pdf-2,what is the percent of the network route in miles that is not leased but owned by the company,0.81237,,0,,False,False,no_program_parsed,"{
+""variables"": {
+""owned_miles"": 26064,
+""operated_miles"": 32084-26064,
+""route_miles"": 32084
+},
+""formula"": ""((owned_miles / route_miles) * 100)"",
+""unit"": ""percent""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,GPN/2013/page_92.pdf-1,what percentage of lease payments will be paid out in the first year?,0.19366,future_minimum_lease_payments / 12 * 100,2,475800.0%,True,False,,"{
+""variables"": {""future_minimum_lease_payments"": 57096, ""claims_and_lawsuits"": 0},
+""formula"": ""future_minimum_lease_payments / 12 * 100"",
+""unit"": ""percent""
+}",1.0,,0.6779925227165222,475800.0%,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,STT/2009/page_25.pdf-2,what was the percent change in the aggregate net asset values of the collateral pools underlying ssga lending funds between 2008 and 2009?,0.29167,((direct_lending_collateral_pools + total_ssga_lending_funds * ssga_lending_funds_collateral_pools) - total_direct_lending_collateral_pools) / total_direct_lending_collateral_pools * 100,4,452.7%,True,False,,"{
+""variables"": {""direct_lending_collateral_pools"": 85, ""ssga_lending_funds_collateral_pools"": 24, ""total_ssga_lending_funds"": 31, ""total_direct_lending_collateral_pools"": 150},
+""formula"": ""((direct_lending_collateral_pools + total_ssga_lending_funds * ssga_lending_funds_collateral_pools) - total_direct_lending_collateral_pools) / total_direct_lending_collateral_pools * 100"",
+""unit"": ""percent""
+}",1.0,,0.8711675405502319,452.7%,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,PNC/2012/page_65.pdf-1,what percentage of the total carrying amount of investment securities is the securities held to maturity?,16.93811,total_carrying_amount_investment_securities_amortized_cost / total_carrying_amount_investment_securities_fair_value * 100,2,17.8%,True,False,,"{
+""variables"": {
+""total_carrying_amount_investment_securities_amortized_cost"": 10860,
+""total_carrying_amount_investment_securities_fair_value"": 61018
+},
+""formula"": ""total_carrying_amount_investment_securities_amortized_cost / total_carrying_amount_investment_securities_fair_value * 100"",
+""unit"": ""percent""
+},
+""variables"": {
+""total_carrying_amount_investment_securities_amortized_cost"": 12450,
+""total_carrying_amount_investment_securities_fair_value"": 61912
+},
+""formula"": """",
+""unit"": ""none""
+}",1.0,,0.8455640077590942,17.8%,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,ratio_calculation,AMT/2003/page_27.pdf-3,in 2004 following the consolidation of the business operation what was the percentage of rental square feet in boston up for re-lease,0.33333,10000 / 30000 * 100,1,33.3%,True,False,,"{
+""variables"": {
+""rental_square_feet_boston"": 10000
+},
+""formula"": ""10000 / 30000 * 100"",
+""unit"": ""percent""
+},
+""formula"": ""100""
+}",1.0,,0.6931637525558472,33.3%,False,False,False,False,1.0,1.0,True
+deepseek-ai/deepseek-llm-7b-chat,tool_program,generic_financial_qa,ETR/2008/page_298.pdf-2,"what is the total value , in millions of dollars , of issuable long-term securities?",1450.0,,1,750,True,False,,"{
+""variables"": {
+""issuable_long_term_securities"": 750
+},
+""formula"": """",
+""unit"": ""millions of dollars""
+}",1.0,,0.8253985047340393,750,False,False,False,False,1.0,1.0,True

@@ -1,0 +1,25 @@
+extractor_id,condition,task_type,financebench_id,question,gold_answer,formula,n_vars,computed,executed,match_units,fail_reason,extractor_raw,support_probability,verbalized_confidence,logprob_confidence,parsed_answer,weak_match_raw,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong
+Qwen/Qwen2.5-0.5B-Instruct,tool_program,guidance_delta,financebench_id_01476,"As of FY2023Q1, by how many percentage points did Pepsico raise full year guidance in respect of core constant currency EPS growth?",Pepsico raised full year guidance in respect of core constant currency EPS growth by 1 percentage point.,,0,,False,False,no_program_parsed,"{
+  ""variables"": {},
+  ""formula"": """",
+  ""unit"": """"
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False
+Qwen/Qwen2.5-0.5B-Instruct,tool_program,cash_flow_category_selection,financebench_id_01163,"Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?","Among the three, cash flow from operations was the highest for Nike in FY2023.",cash_flow_operations / (cash_flow_investing + cash_flow_financing),3,2.8%,True,False,,"{
+  ""variables"": {
+    ""cash_flow_operations"": 5841,
+    ""cash_flow_investing"": 564,
+    ""cash_flow_financing"": 1541
+  },
+  ""formula"": ""cash_flow_operations / (cash_flow_investing + cash_flow_financing)"",
+  ""unit"": ""percent""
+}",1.0,,0.8108490109443665,2.8%,False,False,False,False,1.0,1.0,True
+Qwen/Qwen2.5-0.5B-Instruct,tool_program,period_comparison,financebench_id_01484,How did JnJ's US sales growth compare to international sales growth in FY2022?,US sales increased 3.0% vs international sales decline of 0.6%.,,0,,False,False,no_program_parsed,"{
+  ""variables"": {
+    ""operating_income_us"": 12516,
+    ""operating_income_international"": 11190,
+    ""operating_margin_us"": (12516 / 11190) * 100,
+    ""operating_margin_international"": (46363 / 46363) * 100
+  },
+  ""formula"": ""operating_margin_us - operating_margin_international"",
+  ""unit"": ""%""
+}",0.0,,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False

@@ -1,0 +1,5 @@
+reader,condition,accuracy,numeric_accuracy,refusal_rate,verbalized_ece,n,inherited_ece,support_corr
+Qwen2.5-0.5B-Instruct,cascade_bundle,0.12,0.1,0.48,0.37224999999999997,50,0.71,0.11927968090342447
+Qwen2.5-0.5B-Instruct,raw_gold_evidence,0.2,0.2,0.08,0.7029999999999998,50,,
+Qwen2.5-7B-Instruct,cascade_bundle,0.3,0.24,0.52,0.16530612244897955,50,0.4099999999999999,0.17039954414774924
+Qwen2.5-7B-Instruct,raw_gold_evidence,0.22,0.16,0.28,0.23793103448275854,50,,

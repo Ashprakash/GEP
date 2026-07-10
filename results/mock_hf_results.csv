@@ -1,0 +1,11 @@
+condition,id,gold_answer,parsed_answer,weak_match_raw,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong
+question_only,walmart_ebitda_margin,6.1%,INSUFFICIENT_EVIDENCE,False,False,False,True,0.3,0.09,False
+with_gold_evidence,walmart_ebitda_margin,6.1%,approximately 15%,False,False,False,False,0.94,0.8835999999999999,True
+question_only,acme_retention_ratio,0.79,about 12%,True,False,False,False,0.75,0.5625,False
+with_gold_evidence,acme_retention_ratio,0.79,approximately 15%,False,False,False,False,0.94,0.8835999999999999,True
+question_only,amex_operating_margin,"No, American Express's operating margin was approximately 18% in FY2022, below 20%.",about 12%,False,False,False,False,0.75,0.5625,False
+with_gold_evidence,amex_operating_margin,"No, American Express's operating margin was approximately 18% in FY2022, below 20%.",approximately 15%,False,False,False,False,0.94,0.8835999999999999,True
+question_only,boeing_effective_tax_rate,The effective tax rate was 87.2%.,The effective tax rate was 87.2%.,True,True,True,False,0.9,0.009999999999999995,False
+with_gold_evidence,boeing_effective_tax_rate,The effective tax rate was 87.2%.,The effective tax rate was 87.2%.,True,True,True,False,0.95,0.0025000000000000044,False
+question_only,mgm_ebitdar_segment,The Las Vegas Strip Resorts segment contributed the most Adjusted Property EBITDAR.,about 12%,False,False,False,False,0.75,0.5625,False
+with_gold_evidence,mgm_ebitdar_segment,The Las Vegas Strip Resorts segment contributed the most Adjusted Property EBITDAR.,approximately 15%,False,False,False,False,0.94,0.8835999999999999,True

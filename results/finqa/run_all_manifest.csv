@@ -1,0 +1,4 @@
+model,status,detail
+Qwen/Qwen2.5-7B-Instruct,OK,commit=0.368 cov=0.95 n=20
+deepseek-ai/deepseek-llm-7b-chat,OK,commit=0.182 cov=0.55 n=20
+nvidia/Nemotron-Mini-4B-Instruct,OK,commit=0.214 cov=0.7 n=20

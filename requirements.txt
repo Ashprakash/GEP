@@ -1,0 +1,14 @@
+# GEP evaluation harness — dependencies to reproduce the results tables.
+# (Training/distillation deps — trl, peft, bitsandbytes, mergekit — live in
+#  requirements-colab.txt and are NOT needed for the evaluation harness.)
+
+torch>=2.2            # Apple MPS / CUDA / CPU
+transformers>=4.44
+datasets>=2.20
+huggingface_hub
+accelerate
+sentencepiece
+pandas
+numpy
+tqdm
+openai                # only used by llm_judge.py (LLM-as-judge scoring)

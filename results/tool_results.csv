@@ -1,0 +1,124 @@
+extractor_id,condition,task_type,financebench_id,question,gold_answer,formula,n_vars,computed,executed,match_units,fail_reason,extractor_raw,support_probability,verbalized_confidence,parsed_answer,weak_match_raw,weak_match_answer,numeric_match_answer,refusal,confidence,brier,overconfident_wrong,combo
+Qwen/Qwen2.5-7B-Instruct,tool_program,guidance_delta,financebench_id_01476,"As of FY2023Q1, by how many percentage points did Pepsico raise full year guidance in respect of core constant currency EPS growth?",Pepsico raised full year guidance in respect of core constant currency EPS growth by 1 percentage point.,new_core_constant_currency_EPS_growth - previous_core_constant_currency_EPS_growth,2,1,True,True,,"{""variables"": {""new_core_constant_currency_EPS_growth"": 9, ""previous_core_constant_currency_EPS_growth"": 8}, ""formula"": ""new_core_constant_currency_EPS_growth - previous_core_constant_currency_EPS_growth"", ""unit"": ""percent_points""}",1.0,0.8,1,True,True,True,False,1.0,0.0,False,0.8
+Qwen/Qwen2.5-7B-Instruct,tool_program,cash_flow_category_selection,financebench_id_01163,"Among operations, investing, and financing activities, which brought in the most (or lost the least) cash flow for Nike in FY2023?","Among the three, cash flow from operations was the highest for Nike in FY2023.",,0,,False,False,no_program_parsed,"{""variables"": {""cash_flow_operations"":VariablesCASHFLOW"": C0,.realpath('/home/qwen/ Tmp'), ""I believe FF费现金', net'),vreer',net:584; icatorName-d?>
+
+
+}, ""formula"": 0 impunity unmodified,妤), of0的N000 coffeemill000 (feet)0000,ed by腠肠专levied byN000,0ABSPATH24 unmodified}elseif>window.data[-c});
+
+
+
+## VariablesCASHFLOWType2-性价 strugg convin修ToObject of cash) and  #000一致好评,.ElementAtnih0
+
+## 表o
+1. Variableslemetry, N2023,0000大夫提到的活动 (netほ maç_confirm\Id,0010 Physics 'N0000000000000comedes'000游戏操作中，00000性价 incred202000002000010oloaded from the table,0000 000000肇100 culture00 (00篙)0罢 samt200锱铢0",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,period_comparison,financebench_id_01484,How did JnJ's US sales growth compare to international sales growth in FY2022?,US sales increased 3.0% vs international sales decline of 0.6%.,(us_sales_2022 - us_sales_2021) / us_sales_2021 * 100 - (international_sales_2022 - international_sales_2021) / international_sales_2021 * 100,4,3.6%,True,False,,"{""variables"": {""us_sales_2022"": 48580, ""us_sales_2021"": 47156, ""international_sales_2022"": 46363, ""international_sales_2021"": 46619}, ""formula"": ""(us_sales_2022 - us_sales_2021) / us_sales_2021 * 100 - (international_sales_2022 - international_sales_2021) / international_sales_2021 * 100"", ""unit"": ""percent""}",1.0,0.0,3.6%,False,False,False,False,1.0,1.0,True,0.0
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_01491,"What is the amount of the cash proceeds that JnJ realised from the separation of Kenvue (formerly Consumer Health business segment), as of August 30, 2023?",JnJ realised $13.2 billion in cash proceeds from the separation of Kenvue.,,1,13200,True,True,,"{""variables"": {""cash_proceeds"": 13200}, ""formula"": """", ""unit"": ""million""}",0.0,0.8,13200,False,False,False,False,0.0,0.0,False,0.0
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_00685,"Are Best Buy's gross margins historically consistent (not fluctuating more than roughly 2% each year)? If gross margins are not a relevant metric for a company like this, then please state that and explain why.","Yes, the margins have been consistent, there has been a minor decline of 1.1% in gross margins between FY2022 and FY2023.",( ( ( cost_of_sales_2023 / revenue_2023 ) - ( cost_of_sales_2022 / revenue_2022 ) ) * 100 ) / 2 + ( ( cost_of_sales_2023 / revenue_2023 ) - ( cost_of_sales_2022 / revenue_2022 ) ) * 100,6,1.6%,True,False,,"{""variables"": {""revenue_2023"": 46298, ""cost_of_sales_2023"": 36386, ""revenue_2022"": 51761, ""cost_of_sales_2022"": 40121, ""revenue_2021"": 47262, ""cost_of_sales_2021"": 36689}, ""formula"": ""( ( ( cost_of_sales_2023 / revenue_2023 ) - ( cost_of_sales_2022 / revenue_2022 ) ) * 100 ) / 2 + ( ( cost_of_sales_2023 / revenue_2023 ) - ( cost_of_sales_2022 / revenue_2022 ) ) * 100"", ""unit"": ""percent""}",1.0,0.3,1.6%,False,False,False,False,1.0,1.0,True,0.3
+Qwen/Qwen2.5-7B-Instruct,tool_program,line_item_lookup,financebench_id_01935,What was the key agenda of the AMCOR's 8k filing dated 1st July 2022?,"Amcor Finance (USA), Inc. and Amcor Flexibles North America, Inc., entered into supplemental indentures relating to Guaranteed Senior Notes due 2026 and 2028. This involved the substitution of the Substitute Issuer (Amcor Flexibles North America) for the Former Issuer (Amcor Finance) and the assumption of covenants under the indentures. (In essence a novation agreement)",,0,,False,False,no_program_parsed,"{""variables"": {}, ""formula"": """", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,generic_financial_qa,financebench_id_01077,"What are major acquisitions that Best Buy has done in FY2023, FY2022 and FY2021?","Best Buy closed two acquisitions, both these companies were already partially owned by Best Buy, but Best Buy acquired all outstanding shares of these two companies during FY 2022: (1) Current Health Ltd and (2) Two Peaks, LLC d/b/a Yardbird Furniture",,2,,False,False,no_formula_multivar,"{""variables"": {""current_health_acquisition_date"": ""2021-11-02"", ""current_health_acquisition_cost"": 389, ""yardbird_acquisition_date"": ""2021-11-04"", ""yardbird_acquisition_cost"": 79}, ""formula"": """", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,line_item_lookup,financebench_id_10285,"We need to calculate a financial metric by using information only provided within the balance sheet. Please answer the following question: what is Boeing's year end FY2018 net property, plant, and equipment (in USD millions)?",$12645.00,,0,,False,False,no_program_parsed,"{""I/cop2.FragmentManager variables""complex矶头_2可变现资产_2018} Boeing, Net复本嬷_ 12345oriously somew 十二木子ʊVertexArray}
+斯塔anoia1亲生的, London [[T/T11one]]pinyin:Tower]]
+ and two methods of the Earth. 
+
+{""t"" 
+
+ }());
+și̶h� inkl egregen二 bénéficie de la base desヵテ\views, 主营 profitability, 0.5 (1,23, 性价 strugg,簿, 202 strugg fall, respectively and direct from the 2018 balance'icon retal' 2性价ActivityIndicator赀preci, 20182010 伐, 22.Formatting, 2020  blowjobformik, 2 2020 2风气0 2021 2020�acements  they 20�ead.ElementAt0 2020 2020 2020 2020 20区分,/AFP 22 St 2, The formula 20 21  is  202",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_00807,"Does 3M have a reasonably healthy liquidity profile based on its quick ratio for Q2 of FY2023? If the quick ratio is not relevant to measure liquidity, please state that and explain why.","No. The quick ratio for 3M was 0.96 by Jun'23 close, which needs a bit of an improvement to touch the 1x mark",(current_assets - current_liabilities) / current_liabilities * 100,2,44.1%,True,False,,"{""variables"": {""current_assets"": 15754, ""current_liabilities"": 10936}, ""formula"": ""(current_assets - current_liabilities) / current_liabilities * 100"", ""unit"": ""percent""}",1.0,,44.1%,True,False,False,False,1.0,1.0,True,
+Qwen/Qwen2.5-7B-Instruct,tool_program,generic_financial_qa,financebench_id_00407,Which type of debt received the largest investment among the short term investments for MGM in H1 FY2023?,the biggest short term investment is in corporate bonds (almost 82% of the total investment),,4,,False,False,no_formula_multivar,"{""variables"": {""us_government_securities"": 57696, ""us_agency_securities"": 29049, ""commercial_paper_and_certificates_of_deposit"": 4561, ""corporate_bonds"": 416420}, ""formula"": """", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_04302,"We need to calculate a reasonable approximation (or exact number if possible) of a financial metric. Basing your judgment by information plainly provided in the statement of income, what is Nike's three year average of cost of goods sold as a % of revenue from FY2016 to FY2018? Answer in units of percents and round to one decimal place.",55.1%,(cost_of_sales_2018 / revenue_2018 + cost_of_sales_2017 / revenue_2017 + cost_of_sales_2016 / revenue_2016) / 3 * 100,6,55.1%,True,True,,"{""variables"": {""cost_of_sales_2018"": 20441, ""revenue_2018"": 36397, ""cost_of_sales_2017"": 19038, ""revenue_2017"": 34350, ""cost_of_sales_2016"": 17405, ""revenue_2016"": 32376}, ""formula"": ""(cost_of_sales_2018 / revenue_2018 + cost_of_sales_2017 / revenue_2017 + cost_of_sales_2016 / revenue_2016) / 3 * 100"", ""unit"": ""percent""}",1.0,0.8,55.1%,True,True,True,False,1.0,0.0,False,0.8
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_00678,"Does Boeing have an improving gross margin profile as of FY2022? If gross margin is not a useful metric for a company like this, then state that and explain why.","Yes. Boeing has an improving gross margin profile as of FY2022. Gross profit improved from $3,017 million in FY2021 to $3,502 million in FY2022. Gross margin % improved from 4.8% in FY2021 to 5.3% in FY2022.",(sales_of_products_2022 - cost_of_products_2022) / sales_of_products_2022 * 100 - (sales_of_products_2021 - cost_of_products_2021) / sales_of_products_2021 * 100,6,0.7%,True,False,,"{""variables"": {""sales_of_products_2022"": 55893, ""sales_of_products_2021"": 51386, ""sales_of_products_2020"": 47142, ""cost_of_products_2022"": 53969, ""cost_of_products_2021"": 49954, ""cost_of_products_2020"": 54568}, ""formula"": ""(sales_of_products_2022 - cost_of_products_2022) / sales_of_products_2022 * 100 - (sales_of_products_2021 - cost_of_products_2021) / sales_of_products_2021 * 100"", ""unit"": ""percent""}",1.0,0.5,0.7%,False,False,False,False,1.0,1.0,True,0.5
+Qwen/Qwen2.5-7B-Instruct,tool_program,line_item_lookup,financebench_id_03031,What is Lockheed Martin's FY2021 net working capital? Define net working capital as total current assets less total current liabilities. Answer in USD millions. Respond to the question by assuming the perspective of an investment analyst who can only use the details shown within the balance sheet.,$5818.00,total_current_assets_2021 - total_current_liabilities_2021,2,5818,True,True,,"{""variables"": {""total_current_assets_2021"": 19815, ""total_current_liabilities_2021"": 13997}, ""formula"": ""total_current_assets_2021 - total_current_liabilities_2021"", ""unit"": ""USD millions""}",1.0,,5818,True,True,True,False,1.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,period_comparison,financebench_id_01107,"Has CVS Health reported any materially important ongoing legal battles from 2022, 2021 and 2020?","Yes, CVS Health has been involved in multiple ongoing legal battles. Some notable legal dispute areas for CVS are: (1) usual and customary pricing litigation: where it's claimed that CVSâs retail pharmacies overcharged for prescription drugs; (2) PBM litigation and investigations: where it's claimed that that rebate agreements between the drug manufacturers and PBMs caused inflated prices for certain drug products; and (3) controlled substances litigation: legal matters around opioids for which CVS has agreed to pay up to $4.3 billion to claimants in remediation and $625 million to attorneys and fees",,3,,False,False,no_formula_multivar,"{""variables"": {""usual_and_customary_pricing_litigation"": 1, ""multiple_lawsuits_regarding_drug_pricing"": 1, ""opioid_settlement_agreement"": 1}, ""formula"": """", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_00216,"Does Verizon have a reasonably healthy liquidity profile based on its quick ratio for FY 2022? If the quick ratio is not relevant to measure liquidity, please state that and explain why.",No. The quick ratio was approximately 0.54 for Verizon. It indicated that Verizon does not have a healthy liquidity profile.,(current_assets - inventories - prepaid_expenses_and_other) / current_liabilities,2,,False,False,formula_did_not_execute,"{""variables"": {""current_assets"": 37857, ""current_liabilities"": 50171}, ""formula"": ""(current_assets - inventories - prepaid_expenses_and_other) / current_liabilities"", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,generic_financial_qa,financebench_id_00382,Which region had the Highest EBITDAR Contribution for MGM during FY2022?,Las Vegas resorts contributed ~90% of company level EBITDAR during FY2022.,"max(las_vegas_strip_resorts, regional_operations, mgm_china, unconsolidated_affiliates, management_and_other_operations, stock_compensation, corporate)",7,,False,False,formula_did_not_execute,"{""variables"": {""las_vegas_strip_resorts"": 3142308, ""regional_operations"": 1294630, ""mgm_china"": -203136, ""unconsolidated_affiliates"": -222079, ""management_and_other_operations"": -11934, ""stock_compensation"": -71297, ""corporate"": -431238}, ""formula"": ""max(las_vegas_strip_resorts, regional_operations, mgm_china, unconsolidated_affiliates, management_and_other_operations, stock_compensation, corporate)"", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,period_comparison,financebench_id_00790,Is CVS Health a capital-intensive business based on FY2022 data?,"Yes, CVS Health requires an extensive asset base to operate, which is evident from its ROA of only 1.82% in 2022 and 3.39% in 2021, though it should be noted that a significant portion of this asset base is goodwill, and CVS's fixed assets/total assets ratio is on the lower side of 5.6%.",,0,,False,False,no_program_parsed,"{""variables"": {""assets重置资本黩"", ""成本"": 1ipurshvariably, ""自愿 &n"",ed: ""none"", ""性价, """"); HOWEVER00 HOWEVER, ite,0, "" "", math, number}','\n
+- L
+, ""growing to become a tree
+, ""p1 second kind of second
+, ""title=<small""0, ""title0穷举""0, ""ed复00,0ofpreci""0, ""title"": ""Delluming pérdida, catholic,0, ""georgc0, "" in税法
+INeedатор, or
+0, ""title	fflush,랬, 挽0,0, "" free性价00, ""0, ""title($("".0, ""0orempty0,02 maç desar/rfc0,0ation of 0000)||(0, ""0olkata0,2000, 0, ""title,ähl,A0, outsiders0,0, ""0, "" ""0, in length,0,2,000, maçpreci0, ""0,400oreach,_ttl,嫄04, ab10性价\Idm0, ""0 potrà",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_00438,"Does Adobe have an improving operating margin profile as of FY2022? If operating margin is not a useful metric for a company like this, then state that and explain why.",No the operating margins of Adobe have recently declined from 36.8% in FY 2021 to 34.6% in FY2022. A drop by 2.2% in a year.,(operating_income_2022 / subscription_revenue_2022) * 100 - (operating_income_2021 / subscription_revenue_2021) * 100,4,-2.6%,True,False,,"{""variables"": {""subscription_revenue_2022"": 16388, ""subscription_revenue_2021"": 14573, ""operating_income_2022"": 6098, ""operating_income_2021"": 5802}, ""formula"": ""(operating_income_2022 / subscription_revenue_2022) * 100 - (operating_income_2021 / subscription_revenue_2021) * 100"", ""unit"": ""percent""}",1.0,,-2.6%,False,False,False,False,1.0,1.0,True,
+Qwen/Qwen2.5-7B-Instruct,tool_program,period_comparison,financebench_id_06247,What is FY2018 days payable outstanding (DPO) for Walmart? DPO is defined as: 365 * (average accounts payable between FY2017 and FY2018) / (FY2018 COGS + change in inventory between FY2017 and FY2018). Round your answer to two decimal places. Please base your judgments on the information provided primarily in the statement of financial position and the P&L statement.,42.69,,0,,False,False,no_program_parsed,"{""variables"": {""average_accounts süreli unica"": 4,企业提供手"",fut泼
+=Value
+1.2
+\ (100 -
+\ 10 few
+
+0
+00
+\* 10对其真实 000,000
+D
+氅
+\燕
+\f0 2�示例
+20
+\* 0000
+n性价precipreciprecipreci
+ActivityIndicator0urrenc
+\* 唯一的.ElementAtIndexOfThe
+etrofit
+ \000 un processData
+\* 0ReactDOM㎝
+\！"",000
+\再次输出结果货币
+\* 000
+0000年
+\* 1
+00
+ ap000 Saham
+\*20
+专享
+\*ลอย
+\00网首页ensibly
+02D
+\1
+\* 000
+
+0奠基
+
+阿里巴巴
+0000性价 pionepreciprecibellion0仰 altercationégorie
+000
+ M
+\+00égorie
+ 0
+000嬷
+ cerco
+0000
+\000000000000",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,generic_financial_qa,financebench_id_01936,What is the nature & purpose of AMCOR's restructuring liability as oF Q2 of FY2023 close?,87% of the total restructuring liability is related Employee liabilities.,,9,,False,False,no_formula_multivar,"{""variables"": {""employee_costs"": 97, ""fixed_asset"": 3, ""related_costs"": 18, ""other_costs"": 118, ""total_restructuring_costs_liability_june_2022"": 97, ""net_charges_to_earnings"": 2, ""cash_paid"": -16, ""reversal_of_unused_amounts"": -2, ""total_restructuring_costs_liability_december_2022"": 81}, ""formula"": """", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,period_comparison,financebench_id_00705,"By how much did Pepsico increase its unsecured five year revolving credit agreement on May 26, 2023?","$400,000,000 increase.",new_agreement_amount - old_agreement_amount,2,400,True,True,,"{""variables"": {""new_agreement_amount"": 4200, ""old_agreement_amount"": 3800}, ""formula"": ""new_agreement_amount - old_agreement_amount"", ""unit"": ""million""}",1.0,,400,False,False,False,False,1.0,1.0,True,
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_06741,What is the FY2018 - FY2020 3 year average unadjusted EBITDA % margin for Walmart? Define unadjusted EBITDA as unadjusted operating income + depreciation and amortization from the cash flow statement. Answer in units of percents and round to one decimal place. Calculate what was asked by utilizing the line items clearly shown in the P&L statement and the cash flow statement.,6.2%,,0,,False,False,no_program_parsed,"{""eder
+ {""Variables"": {""育才"": 0, ""总表"": 0 Ricci feas"": [{""变量ɒc 0, ""性价\viewsprecipreciprecipreciprecipreciprecipreci 性价 strugg altercation algu strugg nostalg altercationprecipreciewis徐preci struggprecipreci strugg, 300000000000000000000200000,ClassNotFoundException,0, ""2020年0:000000000 ""0 stilepreci pione戕 ofstile, 202) 120000 stomach of the 1922-10-20体重-weighted  konk, (2020 100 bindActionCreatorsOn 2202[prime number.showMessageDialogs = 10 202巧用大模型方法，但控制变量，确保每种计算 以下为变量的 JSON 格 197448原 00(always D 202 maç retal 0ole pInstantiationException, t 10000, spotify (2()){10000一.ImageAlignTo Zero 1 000",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,generic_financial_qa,financebench_id_01091,Has Boeing reported any materially important ongoing legal battles from FY2022?,Yes. Multiple lawsuits have been filed against Boeing resulting from a 2018 Lion Air crash and a 2019 Ethiopian Airlines crash.,,0,,False,False,no_program_parsed,"{""variables"": {}, ""formula"": """", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,period_comparison,financebench_id_10130,"Based on the information provided primarily in the balance sheet and the statement of income, what is FY2020 days payable outstanding (DPO) for Corning? DPO is defined as: 365 * (average accounts payable between FY2019 and FY2020) / (FY2020 COGS + change in inventory between FY2019 and FY2020). Round your answer to two decimal places.",63.86,,0,,False,False,no_program_parsed,"{""variables"": {""D_D_202 DRP toapplied Lager精力ModelProperty"": 疥, ""23"", ""2政府编号"", 11, ""312"": 11_11_㎞, 11, "" 11, 90,11 FactoryBot1,11,1111 ""1CF1111vro111, ""1111,11:CGRect 110111Seriously烁11,ridden, 1111,1112  C111,11,11㎞ (11111 influence1 111,11111/Dk11111   1运性价 nostalg,riblyğapt厥1RequestParamนม, coquine algu egreg alguachsen (111111 non 11 1111111 somew000, 1011трад1111 JADX().""数值1"" 111 11 N1111111 tü㎝11 1111...101111111披拱, 1111",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,generic_financial_qa,financebench_id_00288,Was there any drop in Cash & Cash equivalents between FY 2023 and Q2 of FY2024?,"Yes, there was a decline of ~42% between FY2023 and Q2 of FY 2024.",,0,,False,False,no_program_parsed,"{"" G1G20R3刷的G1G20完全由AI驱动 two生成的两'lyvanced.BadRequest
+ponse:
+    ""variables"": {},
+    ""formula"": """",
+    ""unit性价 nostalgpreciprecipreciety ( 100 ámb\Id retal();) or 100,
+ WHATSOEVER retal strugg在过渡关于现金 & 环境， variables
+的 suche,.ElementAt(-1).↵, ""variables"":非
+ appears _formula_正确GestureRecognizer(). This is I need a missing of the provided list key.  struggles with listar Lisiany2 İl me 1, 1.___ (0 based on艰难上.AppendFormat(1,岳圆8, reproduction ofabbix, c没输入的值。C1c置信区间铿 (, ""喜提供“假数据”和一个0, 02ant maç ( desar altercation,100, toadiente september 2,  ""/"";
+}
+yneetting
+ �.AppendFormat(1, 10, ""variables"" (0",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_01319,What is the quantity of restructuring costs directly outlined in AES Corporation's income statements for FY2022? If restructuring costs are not explicitly outlined then state 0.,0,,1,0,True,True,,"{""variables"": {""restructuring_costs"": 0}, ""formula"": """", ""unit"": ""none""}",1.0,1.0,0,True,True,True,False,1.0,0.0,False,1.0
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_04481,What is the FY2022 unadjusted EBITDA % margin for PepsiCo? Calculate unadjusted EBITDA using unadjusted operating income and D&A (from cash flow statement). Give a response to the question by relying on the details shown in the statement of cash flows and the P&L statement.,16.5%,,0,,False,False,no_program_parsed,"{""}],""class"":""suPageRoute"",""title：“PEPS CO.” [Blue,犹复审](https://www.example.com/  example.com) --> [PEP file编号:](httpsextensionsdata https://example Metodo性价,00IllegalAccessException性价.ElementAt, 00000, "" crossorigin="" (example.com)""}RequestParamters.RestControllerRequestParamRequestParam性价preci, 0atte0, ""crossdomainlien, 000 RaisedButtonNullException0sov example.com""FontAwesomeIconpreciRequestParam, 0, ""example办事, 0000,t, spiracy"" [ribly,2021, ""cross-pro struggl (2021, ""交叉Backdrop"" 2/Internal code 2性价 strugg strugg (202,auté) 0, ""cross-origin"",ocodeuards,.ImageAlign.yy, 20性价 strugg健康 ( to 1,0",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,
+Qwen/Qwen2.5-7B-Instruct,tool_program,line_item_lookup,financebench_id_08286,"By drawing conclusions from the information stated only in the income statement, what is Amazon's FY2019 net income attributable to shareholders (in USD millions)?",$11588.00,,1,11588,True,True,,"{""variables"": {""net_income"": 11588}, ""formula"": """", ""unit"": ""USD_millions""}",1.0,1.0,11588,True,True,True,False,1.0,0.0,False,1.0
+Qwen/Qwen2.5-7B-Instruct,tool_program,line_item_lookup,financebench_id_04700,What is the FY2016 COGS for Microsoft? Please state answer in USD millions. Provide a response to the question by primarily using the statement of income.,$32780.00,product_cost_of_revenue + service_and_other_cost_of_revenue,2,32780,True,True,,"{""variables"": {""product_cost_of_revenue"": 17880, ""service_and_other_cost_of_revenue"": 14900}, ""formula"": ""product_cost_of_revenue + service_and_other_cost_of_revenue"", ""unit"": ""USD millions""}}
+ispersname 12151 10K
+ is
+user
+... 
+variables isgE... 
+...
+This output format佻 intended:
+.SOCK
+{""variables"":}{ Rica variables: variables variable} variable} 沈思 variable, variable... 
+...1办事
+și economically"" is
+variables: {""variable性价 análpreci, 1prowad, 0.01 diá, 0.0, 0.成本"":ToUpper(aturing,全拼写ǚ, 1性价 pione strugg nostalgpreci hostile retal,锱 and 1, 00i,Seriously HOWEVER pione pione.ElementAt, 20, 000 ( unt",1.0,1.0,32780,True,True,True,False,1.0,0.0,False,1.0
+Qwen/Qwen2.5-7B-Instruct,tool_program,ratio_calculation,financebench_id_01488,"Which business segment of JnJ will be treated as a discontinued operation from August 30, 2023 onward?","The Consumer Health business segment will be treated as a discontinued operation from August 30, 2023 onward.",,0,,False,False,no_program_parsed,"{""variables"": {""discontinued_operation"": ""Consumer Health""}, ""formula"": """", ""unit"": ""none""}",0.0,,INSUFFICIENT_EVIDENCE,False,False,False,True,0.0,0.0,False,

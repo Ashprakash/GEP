@@ -1,0 +1,2 @@
+model,status,detail
+Qwen/Qwen2.5-0.5B-Instruct,OK,commit=0.0 cov=0.333 n=3

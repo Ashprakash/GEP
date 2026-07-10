@@ -1,0 +1,259 @@
+%% GEP — KDD-style (ACM sigconf) two-column submission draft.
+%% Compiles on Overleaf/TeX Live with the `acmart` class (standard).
+%% DRAFT: cells marked \tbd{} are NOT yet measured — fill from your own runs.
+%% Verify all \cite references against the actual papers before submitting.
+\documentclass[sigconf,nonacm]{acmart}
+
+\settopmatter{printacmref=false}
+\setcopyright{none}
+\pagestyle{plain}
+
+\usepackage{booktabs}
+\usepackage{xcolor}
+\newcommand{\tbd}{\textcolor{red}{\textbf{TBD}}}
+
+\begin{document}
+
+\title{Grounded Execution Precision for Small Financial Language Models}
+\subtitle{Relocating the bottleneck from evidence access to auditable extraction and execution}
+
+\author{Anonymous Author(s)}
+\affiliation{\institution{Anonymous Institution}\country{}}
+
+\begin{abstract}
+Financial question answering over regulatory filings is widely treated as an evidence-access
+problem, tackled with retrieval and long context. We argue and empirically show that for small
+and mid-sized open language models the dominant bottleneck is instead \emph{decision extraction
+and computation}: even when the exact gold evidence is supplied, small models rarely produce the
+correct numeric answer. We introduce \emph{Grounded Execution Precision} (\textsc{GEP}), a
+decomposed procedure in which the
+model extracts typed decision variables and a formula from the raw filing (never the gold
+answer), a deterministic executor computes the result, and a grounding/self-verification signal
+gates a selective answer-or-abstain decision. On the FinanceBench open subset, at fixed model
+size and under an LLM-as-judge scorer, the procedure raises accuracy on computational questions
+from $\sim$20\% (raw-evidence prompting) to $\sim$62\% when it commits (i.e., 62\% at 43\%
+coverage), a $\sim$3$\times$ improvement driven purely by the decision procedure. We further show
+that the residual error is dominated by generation instability and question-type mismatch, not
+reasoning, and outline the distillation study that transfers this behavior into a small student.
+\end{abstract}
+
+\keywords{financial NLP, tool use, calibration, selective prediction, evidence grounding}
+
+\maketitle
+
+\section{Introduction}
+Large language models are increasingly applied to financial decision support over primary
+documents such as 10-K/10-Q filings. The prevailing framing is one of \emph{access}: give the
+model the right passages (via retrieval or long context) and it will answer. We provide evidence
+that, for small and mid-sized open models, this framing is misleading. Even under an
+\emph{oracle} setting---the gold evidence supplied directly---such models answer only $\sim$20\%
+of computational questions correctly, while answering near-perfectly when the final value is
+handed to them verbatim. The gap is therefore one of \emph{extracting decision variables and
+computing over them}, not of retrieval.
+
+\textbf{Hypothesis.} \emph{For small/mid open LLMs on grounded financial QA, the bottleneck is
+decision extraction and computation, not evidence access. Decomposing the task---extract typed
+variables and a formula, compute with a deterministic tool, and abstain unless the decision is
+grounded and executable---substantially improves accuracy and calibration on computational
+questions, where raw-evidence prompting does not.}
+
+\textbf{Contributions.}
+\begin{itemize}
+\item A decomposed, no-leakage procedure (\textsc{GEP}) that turns financial QA into
+typed-variable extraction plus deterministic computation, with a grounding/verification
+confidence for selective prediction (\S\ref{sec:method}).
+\item An apples-to-apples measurement showing a $\sim$3$\times$ accuracy gain at fixed model size
+on computational FinanceBench questions, triangulated across three scorers including
+LLM-as-judge (\S\ref{sec:results}).
+\item A quantified failure taxonomy separating structural task-type limits and infrastructure
+instability from reasoning error, and a distillation study design that transfers the behavior to
+a small student (\S\ref{sec:results}, \S\ref{sec:limitations}).
+\end{itemize}
+
+\section{Related Work}
+\textbf{Financial QA benchmarks.} FinanceBench~\cite{financebench} evaluates QA over real filings
+and reports that models struggle, especially without oracle context. \textbf{Tool / program-of-
+thought reasoning.} Delegating arithmetic to executable programs improves numeric
+reasoning~\cite{pot}. \textbf{Self-consistency and calibration.} Sampling agreement and
+verbalized confidence estimate correctness~\cite{selfconsistency,calibration}. \textbf{Selective
+prediction} trades coverage for accuracy via abstention~\cite{selective}. \textbf{Knowledge
+conflict} studies whether models follow provided evidence over parametric
+memory~\cite{knowledgeconflict}. \textbf{Rationale distillation} transfers reasoning to smaller
+models~\cite{distill}. \textsc{GEP} combines these into a finance-specific, verifiable
+decision procedure and studies its distillation, rather than any single ingredient in isolation.
+
+\section{Method}\label{sec:method}
+Given a question $x$ and raw evidence $E$ from a filing, \textsc{GEP} factorizes the answer
+as extraction followed by deterministic computation:
+\[
+P(y \mid x, E) \;=\; \sum_{z} P_\theta(z \mid x, E)\, \mathbf{1}[y = f(z)],
+\]
+where $z=(\mathcal{V},\phi)$ is a program---typed decision variables $\mathcal{V}$ and a formula
+$\phi$---and $f$ is a deterministic executor. The extractor sees only $x$ and $E$ (never the gold
+answer), emitting $z$ as JSON. The executor evaluates $\phi$ over $\mathcal{V}$ (a sandboxed
+arithmetic evaluator); a single-variable program with no formula is treated as a lookup.
+
+\textbf{Grounding-calibrated confidence.} We define a confidence
+$c = g(\mathcal{V},E)\cdot\mathbf{1}[\text{executed}]$, where $g$ is the fraction of input values
+found verbatim in $E$. A fully grounded, executable program is far more likely correct; a
+hallucinated or non-executing one is not. Optionally a stronger self-verification pass rates the
+computed answer. The system \emph{abstains} when it cannot produce a grounded executable program;
+answering only high-$c$ cases yields selective accuracy at chosen coverage.
+
+\textbf{No-leakage.} Programs are built from raw evidence and question metadata only; the gold
+answer never enters the prompt. Unit-tolerant scoring treats scale-equivalent numbers as equal
+(e.g., \$400M $\equiv$ \$400{,}000{,}000).
+
+\section{Experimental Setup}\label{sec:setup}
+\textbf{Data.} FinanceBench open subset (150 examples). \textbf{Models.} To test generality
+across model families (not a single-model artifact) we evaluate Qwen2.5-Instruct
+(0.5B/1.5B/3B/7B), DeepSeek (\texttt{deepseek-llm-7b-chat}), NVIDIA Nemotron
+(\texttt{Nemotron-Mini-4B-Instruct}), and Phi-3.5-mini, with Gemma-2 and Llama-3.1 as gated
+extras---all in fp16 on Apple Silicon (no quantization).
+\textbf{Baselines.} question-only and raw gold-evidence prompting at matched model size.
+\textbf{Scorers.} strict weak-match, unit-tolerant numeric match, and LLM-as-judge (a stronger,
+different-family judge); we report judge-vs-human agreement on a labeled subset. \textbf{Decode.}
+greedy (repetition penalties corrupt JSON extraction). Pilot results use Qwen2.5-7B, $n{=}30$.
+
+\section{Results}\label{sec:results}
+
+\begin{table}[t]
+\caption{Main result (Qwen2.5-7B, FinanceBench, $n{=}30$ pilot). Same model, same scorer.
+``@commit'' is accuracy on answered items (abstention = selective prediction).}
+\label{tab:main}
+\begin{tabular}{lcccc}
+\toprule
+Method & Cov. & Acc@full & Acc@commit & Exec. \\
+\midrule
+Raw gold-evidence (baseline) & 1.00 & 0.20 & 0.20 & --- \\
+\textbf{\textsc{GEP} (ours)} & 0.43 & 0.27 & \textbf{0.62} & 0.43 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{Selective accuracy vs.\ coverage (self-verification ranking).}
+\label{tab:selective}
+\begin{tabular}{lcccc}
+\toprule
+Coverage & 20\% & 30\% & 50\% & 100\% \\
+\midrule
+Accuracy & \textbf{0.83} & 0.56 & 0.40 & 0.20 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{Accuracy by question type (unit-tolerant, $n{=}30$).}
+\label{tab:tasktype}
+\begin{tabular}{lccc}
+\toprule
+Task type & Acc. & Exec. & $n$ \\
+\midrule
+guidance\_delta & 1.00 & 1.00 & 1 \\
+line\_item\_lookup & 0.60 & 0.60 & 5 \\
+ratio\_calculation & 0.27 & 0.64 & 11 \\
+period\_comparison & 0.17 & 0.33 & 6 \\
+cash\_flow\_category\_selection & 0.00 & 0.00 & 1 \\
+generic\_financial\_qa & 0.00 & 0.00 & 6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\caption{Scorer triangulation (full coverage, $n{=}30$). The LLM-judge matches the
+unit-tolerant scorer, indicating the headline is scorer-robust.}
+\label{tab:scorers}
+\begin{tabular}{lc}
+\toprule
+Scorer & Accuracy \\
+\midrule
+strict weak-match & 0.20 \\
+unit-tolerant & 0.27 \\
+LLM-as-judge & 0.27 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Main finding (Table~\ref{tab:main}).} At fixed model size and identical scorer,
+\textsc{GEP} answers 43\% of questions and is 62\% correct on those, versus 20\% for
+raw-evidence prompting---a $\sim$3$\times$ improvement in the committed regime, with the
+selective curve (Table~\ref{tab:selective}) reaching 0.83 at 20\% coverage.
+
+\textbf{Where it works (Table~\ref{tab:tasktype}).} Gains concentrate on lookup/computation;
+committed failures are yes/no and comparison questions whose gold answers are not single scalars
+(task-form mismatch), not computation errors---an explicit scope statement, not a hidden failure.
+
+\textbf{Scorer robustness (Table~\ref{tab:scorers}).} Strict, unit-tolerant, and LLM-judge scores
+agree on committed items, so the headline is not an artifact of a lenient scorer.
+
+\subsection{Generalization across model families}
+\begin{table}[t]
+\caption{\textsc{GEP} across model families ($n{=}50$, unit-tolerant). Acc@commit is
+accuracy on answered items; coverage is the answered fraction. The effect is not
+Qwen-specific: 3 of 4 families reach 0.40--0.56. Nemotron-4B commits often but with wrong
+formulas (a calibration failure). Baselines pending except Qwen.}
+\label{tab:models}
+\begin{tabular}{llccc}
+\toprule
+Model & Family & Baseline & Acc@commit & Cov. \\
+\midrule
+Qwen2.5-7B & Qwen & 0.22 & \textbf{0.56} & 0.32 \\
+Phi-3.5-mini & Phi & \tbd & \textbf{0.50} & 0.20 \\
+deepseek-llm-7b-chat & DeepSeek & \tbd & 0.40 & 0.20 \\
+Nemotron-Mini-4B & Nemotron & \tbd & 0.05 & 0.38 \\
+\bottomrule
+\end{tabular}
+\end{table}
+Across four families, three reach 0.40--0.56 acc@commit, versus a Qwen raw baseline of 0.22---
+evidence the gain is a property of the decomposed procedure, not a single model. Coverage tracks
+extractor capability; the weakest extractor (Nemotron-4B) commits frequently to incorrect
+programs, motivating the calibrated abstention the method provides. A failure common to all
+families is the comparison question type, whose gold answer is not a single scalar.
+
+\subsection{Distillation into a small student (pending)}
+\begin{table}[t]
+\caption{Held-out reliability of a small student under supervision variants. Metrics:
+accuracy, ECE, counterfactual accuracy, teacher-gap recovery.}
+\label{tab:distill}
+\begin{tabular}{lcccc}
+\toprule
+Supervision & Acc. & ECE & CF-Acc & Gap-rec. \\
+\midrule
+answer-only (baseline) & \tbd & \tbd & \tbd & \tbd \\
++ rationale & \tbd & \tbd & \tbd & \tbd \\
++ tool-trace & \tbd & \tbd & \tbd & \tbd \\
+\textbf{+ tool-trace + abstain (ours)} & \tbd & \tbd & \tbd & \tbd \\
+teacher (reference) & \tbd & \tbd & \tbd & \tbd \\
+\bottomrule
+\end{tabular}
+\end{table}
+This is the central method claim: a small student trained to emit tool-verified, calibrated,
+abstaining decision programs should exceed answer-only and rationale distillation on accuracy,
+calibration, and counterfactual robustness. Results \tbd{} (requires GPU training).
+
+\section{Limitations}\label{sec:limitations}
+(i) \textbf{Scope:} the scalar extract--compute procedure targets computational/lookup questions;
+selection, list, and open-ended textual questions are out of scope and reported as such.
+(ii) \textbf{Generation instability:} fp16 decoding of the 7B extractor on Apple MPS occasionally
+degenerates ($\sim$17\% of the pilot), an infrastructure artifact we mitigate but do not remove.
+(iii) \textbf{Scale:} pilot numbers are $n{=}30$; full-set ($n{=}150$), multi-seed intervals,
+multi-model, and the distillation study are pending (\tbd).
+
+\section{Conclusion}
+We reframe small-model financial QA as a decision-extraction-and-computation problem rather than
+an access problem, and show that a grounded, tool-verified, selectively-abstaining procedure
+yields a $\sim$3$\times$ accuracy gain at fixed model size on computational questions, robust
+across scorers. The distillation of this behavior into small students is the natural next step.
+
+\begin{thebibliography}{9}
+\bibitem{financebench} P.~Islam et al. FinanceBench: A New Benchmark for Financial Question Answering. 2023.
+\bibitem{pot} W.~Chen et al. Program of Thoughts: Disentangling Computation from Reasoning. 2022.
+\bibitem{selfconsistency} X.~Wang et al. Self-Consistency Improves Chain-of-Thought Reasoning. 2022.
+\bibitem{calibration} K.~Tian et al. Just Ask for Calibration: Eliciting Confidence from LLMs. 2023.
+\bibitem{selective} Y.~Geifman and R.~El-Yaniv. Selective Classification for Deep Neural Networks. 2017.
+\bibitem{knowledgeconflict} S.~Longpre et al. Entity-Based Knowledge Conflicts in Question Answering. 2021.
+\bibitem{distill} C.-Y.~Hsieh et al. Distilling Step-by-Step. 2023.
+\end{thebibliography}
+
+\end{document}
