@@ -2,7 +2,7 @@
 
 **Grounded Execution Precision (GEP)** is a research project on reliable financial question answering from grounded evidence.
 
-The repository is still named `groundfin` for continuity with the existing GitHub/Colab workflow, but the research framing has moved to **GEP**.
+The GitHub repository is now named `Ashprakash/GEP`. Some local filenames still contain `groundfin` for continuity with the existing notebooks and Python imports.
 
 The project started as grounded probabilistic distillation, but early experiments changed the thesis. The current, measurement-first direction is:
 
@@ -141,7 +141,7 @@ benchmark/experiment_stages.md           Older staged plan and controls
 
 Open:
 
-[groundfin_colab_runner.ipynb](https://colab.research.google.com/github/Ashprakash/groundfin/blob/main/benchmark/groundfin_colab_runner.ipynb)
+[groundfin_colab_runner.ipynb](https://colab.research.google.com/github/Ashprakash/GEP/blob/main/benchmark/groundfin_colab_runner.ipynb)
 
 Use:
 
@@ -153,8 +153,8 @@ First cell:
 
 ```python
 %cd /content
-!test -d groundfin/.git && git -C groundfin fetch --all && git -C groundfin reset --hard origin/main || git clone https://github.com/Ashprakash/groundfin.git
-%cd /content/groundfin
+!test -d GEP/.git && git -C GEP fetch --all && git -C GEP reset --hard origin/main || git clone https://github.com/Ashprakash/GEP.git
+%cd /content/GEP
 !pip -q install -r requirements-colab.txt
 !git log --oneline -1
 ```

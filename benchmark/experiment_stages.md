@@ -483,8 +483,8 @@ Run the compressed-evidence grounding probe and the template reliability compari
 
 ```python
 %cd /content
-!git -C groundfin pull
-%cd /content/groundfin
+!git -C GEP pull
+%cd /content/GEP
 ```
 
 Then rerun:

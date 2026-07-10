@@ -30,7 +30,7 @@ Purpose:
 
 ## Colab Workflow
 
-Use `groundfin_colab_runner.ipynb` in Colab. The first cell clones or pulls `Ashprakash/groundfin`, then imports the latest code from `benchmark/financebench_pilot.py`.
+Use `groundfin_colab_runner.ipynb` in Colab. The first cell clones or pulls `Ashprakash/GEP`, then imports the latest code from `benchmark/financebench_pilot.py`.
 
 When the code changes:
 
